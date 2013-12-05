@@ -64,17 +64,7 @@ public class UserController {
   			User user = iteratorUser.next();
   			jsonObject = new JSONObject();
   	  		jsonObject.put("id", user.getId());
-  	  		jsonObject.put("account", user.getAccount());
-  	  		jsonObject.put("password", user.getPassword());
-  	  		jsonObject.put("userName", user.getName());
-  	  		if(user.getOrganization()!=null)
-  	  		{
-  	  			jsonObject.put("departmentName", user.getOrganization().getName()); 
-  	  		}
-  	  		else
-  	  		{
-  	  			jsonObject.put("departmentName", ""); 
-  	  		}
+  	  		
   	  		jsonArray.add(jsonObject);
   		}
   		jsonObjectResult.put("data", jsonArray);
@@ -110,17 +100,7 @@ public class UserController {
   			User user = iteratorUser.next();
   			jsonObject = new JSONObject();
   	  		jsonObject.put("id", user.getId());
-  	  		jsonObject.put("account", user.getAccount());
-  	  		jsonObject.put("password", user.getPassword());
-  	  		jsonObject.put("userName", user.getName());
-  	  		if(user.getOrganization()!=null)
-  	  		{
-  	  			jsonObject.put("departmentName", user.getOrganization().getName()); 
-  	  		}
-  	  		else
-  	  		{
-  	  			jsonObject.put("departmentName", ""); 
-  	  		}
+  	  		
   	  		jsonArray.add(jsonObject);
   		}
   		jsonObjectResult.put("data", jsonArray);
@@ -161,17 +141,7 @@ public class UserController {
   			User user = iteratorUser.next();
   			jsonObject = new JSONObject();
   	  		jsonObject.put("id", user.getId());
-  	  		jsonObject.put("account", user.getAccount());
-  	  		jsonObject.put("password", user.getPassword());
-  	  		jsonObject.put("userName", user.getName());
-  	  		if(user.getOrganization()!=null)
-  	  		{
-  	  			jsonObject.put("departmentName", user.getOrganization().getName()); 
-  	  		}
-  	  		else
-  	  		{
-  	  			jsonObject.put("departmentName", ""); 
-  	  		}
+  	  		
   	  		jsonArray.add(jsonObject);
   		}
   		jsonObjectResult.put("data", jsonArray);

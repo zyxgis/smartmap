@@ -56,8 +56,7 @@ public class RoleController {
   			jsonObject = new JSONObject();
   	  		jsonObject.put("id", role.getId());
   	  		jsonObject.put("code", role.getCode());
-  	  		jsonObject.put("name", role.getName());
-  	  		jsonObject.put("superRole", role.getSuperRole());
+  	  		
   	  		jsonObject.put("description", role.getDescription());  	  		
   	  		jsonArray.add(jsonObject);
   		}
@@ -96,8 +95,7 @@ public class RoleController {
   			jsonObject = new JSONObject();
   	  		jsonObject.put("id", role.getId());
   	  		jsonObject.put("code", role.getCode());
-  	  		jsonObject.put("name", role.getName());
-  	  		jsonObject.put("superRole", role.getSuperRole());
+  	  		
   	  		jsonObject.put("description", role.getDescription());  	  		
   	  		jsonArray.add(jsonObject);
   		}
@@ -136,8 +134,7 @@ public class RoleController {
   			jsonObject = new JSONObject();
   	  		jsonObject.put("id", role.getId());
   	  		jsonObject.put("code", role.getCode());
-  	  		jsonObject.put("name", role.getName());
-  	  		jsonObject.put("superRole", role.getSuperRole());
+  	  		
   	  		jsonObject.put("description", role.getDescription());  	  		
   	  		jsonArray.add(jsonObject);
   		}

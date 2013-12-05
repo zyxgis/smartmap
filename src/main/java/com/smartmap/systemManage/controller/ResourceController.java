@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.smartmap.systemManage.dao.ResourceDao;
-import com.smartmap.systemManage.model.Operator;
 import com.smartmap.systemManage.model.Resource;
 
 
@@ -59,13 +58,13 @@ public class ResourceController {
   			jsonObject = new JSONObject();
   	  		jsonObject.put("id", resource.getId());
   	  		jsonObject.put("code", resource.getCode());
-  	  		jsonObject.put("name", resource.getName());
+  	  		
   	  		//jsonObject.put("text", resource.getName());
   	  		//jsonObject.put("leaf", resource.getChildren()==null?true:false); 
   	  		
   	  		jsonObject.put("url", resource.getUrl());
   	  		jsonObject.put("sortOrder", resource.getSortOrder());
-  	  		jsonObject.put("parentName", resource.getParent()==null?"":resource.getParent().getName());
+  	  		jsonObject.put("parentName", resource.getParent()==null?"":resource.getParent().getResourceName());
   	  		jsonObject.put("description", resource.getDescription());
   	  		jsonArray.add(jsonObject);
   		}
@@ -210,8 +209,8 @@ public class ResourceController {
 	{
   		jsonObject.put("id", resource.getId());
   		jsonObject.put("code", resource.getCode());
-  		jsonObject.put("name", resource.getName());
-  		jsonObject.put("text", resource.getName());
+  		jsonObject.put("name", resource.getResourceName());
+  		jsonObject.put("text", resource.getResourceName());
 	  	//jsonObject.put("leaf", resource.getChildren()==null?true:false);
 	  	jsonObject.put("leaf", resource.getChildren().size()==0?true:false); 
   		//jsonObject.put("leaf", false);
@@ -263,13 +262,13 @@ public class ResourceController {
   			jsonObject = new JSONObject();
   	  		jsonObject.put("id", resource.getId());
   	  		jsonObject.put("code", resource.getCode());
-  	  		jsonObject.put("name", resource.getName());
-  	  		jsonObject.put("text", resource.getName());
+  	  		jsonObject.put("name", resource.getResourceName());
+  	  		jsonObject.put("text", resource.getResourceName());
   	  		//jsonObject.put("leaf", resource.getChildren()==null?true:false);  
   	  		//jsonObject.put("leaf", resource.getChildren().size()==0?true:false); 
   	  		jsonObject.put("url", resource.getUrl());
   	  		jsonObject.put("sortOrder", resource.getSortOrder());
-  	  		jsonObject.put("parentName", resource.getParent()==null?"":resource.getParent().getName());
+  	  		jsonObject.put("parentName", resource.getParent()==null?"":resource.getParent().getResourceName());
   	  		jsonObject.put("description", resource.getDescription());
   	  		jsonArray.add(jsonObject);
   		}

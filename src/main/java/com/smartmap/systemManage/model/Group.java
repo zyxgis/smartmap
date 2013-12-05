@@ -13,34 +13,21 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name="SysResource")
-public class Resource {
-
+@Table(name="SysGroup")
+public class Group {
 	@Id
     @GeneratedValue
     private Long id;
     
-    /**资源名称*/
+    /**组织名称*/
     @Column(length=64)
-    private String resourceName;
+    private String groupName;
     
-    /**资源代码*/
+    /**组织编码*/
     @Column(length=64)
     private String code;
-        
-    /**资源URL*/
-    @Column(length=256)
-    private String url;
     
-    /**资源URL*/
-    @Column(length=32)
-    private String target;
-    
-    /**资源排序*/
-    @Column
-    private Long sortOrder;
-    
-    /**上级资源*/
+    /**父组织*/
     @Column
     private Long parentId;
     
@@ -62,15 +49,12 @@ public class Resource {
     @Column(length=256)
     private String description;
 
-    
+   
+    @Transient
+    private Set<Group> children = null;
     
     @Transient
-    private Set<Resource> children = null;
-    
-    @Transient
-    private Resource parent = null;
-    
-    
+    private Group parent = null;
     
     
     
@@ -82,12 +66,12 @@ public class Resource {
 		this.id = id;
 	}
 
-	public String getResourceName() {
-		return resourceName;
+	public String getGroupName() {
+		return groupName;
 	}
 
-	public void setResourceName(String resourceName) {
-		this.resourceName = resourceName;
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 
 	public String getCode() {
@@ -96,30 +80,6 @@ public class Resource {
 
 	public void setCode(String code) {
 		this.code = code;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getTarget() {
-		return target;
-	}
-
-	public void setTarget(String target) {
-		this.target = target;
-	}
-
-	public Long getSortOrder() {
-		return sortOrder;
-	}
-
-	public void setSortOrder(Long sortOrder) {
-		this.sortOrder = sortOrder;
 	}
 
 	public Long getParentId() {
@@ -154,21 +114,21 @@ public class Resource {
 		this.lastUpdate = lastUpdate;
 	}
 
-	public Set<Resource> getChildren() {
+	public Set<Group> getChildren() {
 		return children;
 	}
 
-	public void setChildren(Set<Resource> children) {
+	public void setChildren(Set<Group> children) {
 		this.children = children;
 	}
 
-	public Resource getParent() {
+	public Group getParent() {
 		return parent;
 	}
 
-	public void setParent(Resource parent) {
+	public void setParent(Group parent) {
 		this.parent = parent;
 	}
-   
     
+     
 }

@@ -1,21 +1,12 @@
 package com.smartmap.systemManage.model;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.sql.Timestamp;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,7 +15,7 @@ import javax.persistence.TemporalType;
  * 用户
  */
 @Entity
-@Table(name="Sys_User")
+@Table(name="SysUser")
 public class User implements Serializable {
 
 	@Id
@@ -33,11 +24,11 @@ public class User implements Serializable {
     
     /**账号*/
     @Column(length=32)
-    private String account;
+    private String loginUsername;
     
     /**密码*/
     @Column(length=32)
-    private String password;
+    private String loginPassword;
     
     /**姓名*/
     @Column(length=32)
@@ -51,45 +42,28 @@ public class User implements Serializable {
     @Column(length=32)
     private String email;
     
-    /**IP*/
-    @Column(name = "ip", length = 50, nullable = false)
-    private String ip;
-	
-    /**是否绑定IP*/
-	@Column(name = "isBind")
-    private Boolean isBind;
-	
+    	
     /**手机号码*/
     @Column(length=20)
     private String mobileNumber;
+    
     /**
      * 创建日期
      */
-    @Column(name = "createDate")
-	@Temporal(TemporalType.DATE)
-    private Date createDate;
+    @Column
+	@Temporal(TemporalType.TIMESTAMP)
+    private Timestamp createTime;
 	
     /**
      * 修改日期
      */
-	@Column(name = "lastModifyDate")
-	@Temporal(TemporalType.DATE)
-    private Date lastModifyDate;
-	
-    /**
-     * 所属组织
-     */
-    @ManyToOne(cascade={CascadeType.MERGE,CascadeType.REFRESH})
-    @JoinColumn(name="organizationId")
-    private Organization organization;
+	@Column
+	@Temporal(TemporalType.TIMESTAMP)
+    private Timestamp lastUpdate;	
     
-    /**
-     * 拥有的角色
-     */
-    @ManyToMany 
-    @JoinTable(name="Sys_User_Role",joinColumns=@JoinColumn(name="userId"),
-            inverseJoinColumns=@JoinColumn(name="roleId"))
-    private Set<Role> roles = new HashSet<Role>();
+	/**用户描述*/
+    @Column(length=256)
+    private String description;
 
 	public Long getId() {
 		return id;
@@ -99,20 +73,20 @@ public class User implements Serializable {
 		this.id = id;
 	}
 
-	public String getAccount() {
-		return account;
+	public String getLoginUsername() {
+		return loginUsername;
 	}
 
-	public void setAccount(String account) {
-		this.account = account;
+	public void setLoginUsername(String loginUsername) {
+		this.loginUsername = loginUsername;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getLoginPassword() {
+		return loginPassword;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setLoginPassword(String loginPassword) {
+		this.loginPassword = loginPassword;
 	}
 
 	public String getName() {
@@ -147,55 +121,30 @@ public class User implements Serializable {
 		this.mobileNumber = mobileNumber;
 	}
 
-	public String getIp() {
-		return ip;
+	
+	public String getDescription() {
+		return description;
 	}
 
-	public void setIp(String ip) {
-		this.ip = ip;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public Boolean getIsBind() {
-		return isBind;
+	public Timestamp getCreateTime() {
+		return createTime;
 	}
 
-	public void setIsBind(boolean isBind) {
-		this.isBind = isBind;
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
 	}
 
-	public Date getCreateDate() {
-		return createDate;
+	public Timestamp getLastUpdate() {
+		return lastUpdate;
 	}
 
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
+	public void setLastUpdate(Timestamp lastUpdate) {
+		this.lastUpdate = lastUpdate;
 	}
-
-	public Date getLastModifyDate() {
-		return lastModifyDate;
-	}
-
-	public void setLastModifyDate(Date lastModifyDate) {
-		this.lastModifyDate = lastModifyDate;
-	}
-
-	public Organization getOrganization() {
-		return organization;
-	}
-
-	public void setOrganization(Organization organization) {
-		this.organization = organization;
-	}
-
-	public Set<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
-	}
-    
-    
     
     
 }

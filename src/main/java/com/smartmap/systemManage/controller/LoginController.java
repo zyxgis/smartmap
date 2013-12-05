@@ -49,7 +49,7 @@ public class LoginController {
   		else
   		{
   			user = userList.get(0);
-  			if(!user.getPassword().equals(password))
+  			if(!user.getLoginPassword().equals(password))
   			{
   				returnUrl = "../../login.jsp";
   			}

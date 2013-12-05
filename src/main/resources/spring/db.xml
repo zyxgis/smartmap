@@ -21,10 +21,10 @@
 	</bean>
 	
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="persistenceUnitName" value="hsqldb"/>
+		<property name="dataSource" ref="dataSource"/>
 		<property name="persistenceProvider" ref="persistenceProvider"/>
+		<property name="persistenceUnitName" value="hsqldb"/>		
 		<property name="jpaDialect" ref="jpaDialect"/>		
-		<property name="dataSource" ref="dataSource"/>			
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 				<property name="showSql" value="true" />

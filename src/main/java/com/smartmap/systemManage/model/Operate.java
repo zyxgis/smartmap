@@ -1,8 +1,6 @@
 package com.smartmap.systemManage.model;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,30 +9,21 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
-/**
- * 角色
- */
 @Entity
-@Table(name="SysRole")
-public class Role implements Serializable {
-
+@Table(name="SysOperate")
+public class Operate {
 	@Id
     @GeneratedValue
     private Long id;
-    
-	/**角色代码*/
+       
+	/**操作名称*/
+    @Column(length=64)
+    private String operateName;
+        
+    /**操作代码*/
     @Column(length=64)
     private String code;
-    
-    /**角色名称*/
-    @Column(length=64)
-    private String roleName;
-        
-    /**父角色*/
-    @Column
-    private Long parentId;
     
     /**
      * 创建日期
@@ -54,21 +43,20 @@ public class Role implements Serializable {
     @Column(length=256)
     private String description;
 
-    
-    @Transient
-    private Set<Role> children = null;
-    
-    @Transient
-    private Role parent = null;
-    
-    
-    
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getOperateName() {
+		return operateName;
+	}
+
+	public void setOperateName(String operateName) {
+		this.operateName = operateName;
 	}
 
 	public String getCode() {
@@ -79,23 +67,6 @@ public class Role implements Serializable {
 		this.code = code;
 	}
 
-	public String getRoleName() {
-		return roleName;
-	}
-
-	public void setRoleName(String roleName) {
-		this.roleName = roleName;
-	}
-
-	public Long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
-
-	
 	public String getDescription() {
 		return description;
 	}
@@ -118,22 +89,6 @@ public class Role implements Serializable {
 
 	public void setLastUpdate(Timestamp lastUpdate) {
 		this.lastUpdate = lastUpdate;
-	}
-
-	public Set<Role> getChildren() {
-		return children;
-	}
-
-	public void setChildren(Set<Role> children) {
-		this.children = children;
-	}
-
-	public Role getParent() {
-		return parent;
-	}
-
-	public void setParent(Role parent) {
-		this.parent = parent;
 	}
     
     
