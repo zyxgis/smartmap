@@ -2,6 +2,7 @@ package com.smartmap.systemManage.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -41,14 +42,14 @@ public class Role implements Serializable {
      */
     @Column
     @Temporal(TemporalType.TIMESTAMP)
-    private Timestamp createTime;
+    private Date createTime;
 	
     /**
      * 修改日期
      */
 	@Column
 	@Temporal(TemporalType.TIMESTAMP)
-    private Timestamp lastUpdate;	
+    private Date lastUpdate;	
     
 	/**用户描述*/
     @Column(length=256)
@@ -104,19 +105,19 @@ public class Role implements Serializable {
 		this.description = description;
 	}
 
-	public Timestamp getCreateTime() {
+	public Date getCreateTime() {
 		return createTime;
 	}
 
-	public void setCreateTime(Timestamp createTime) {
+	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
 
-	public Timestamp getLastUpdate() {
+	public Date getLastUpdate() {
 		return lastUpdate;
 	}
 
-	public void setLastUpdate(Timestamp lastUpdate) {
+	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
 	}
 
