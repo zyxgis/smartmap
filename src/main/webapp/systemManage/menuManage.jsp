@@ -87,7 +87,8 @@ Ext.onReady(function () {
            	    tbar: [{
            	    	xtype:'buttongroup',
                        items: [{text: '添加',
-           	        iconCls: 'addIcon'
+           	        iconCls: 'addIcon',
+           	     handler: showAdd
            	    }]},{
            	    	xtype:'buttongroup',
                        items: [{text: '删除',
@@ -158,6 +159,65 @@ Ext.onReady(function () {
         store.loadPage(1);
 	});
 	*/
+	function showAdd() {
+		var addWindow = new Ext.Window({
+			title: '添加菜单',
+			id: 'addWindow',
+	        x: 450,
+	        y: 200,
+	        height:300,
+	        width: 350,
+	        layout: 'form',
+	        items:[{	        	
+	        	xtype: 'form',		        
+		        url: baseDataPath+'/resource/saveResource',
+		        frame: true,	       
+		        bodyPadding: '5 5 0',		       
+		        fieldDefaults: {
+		            msgTarget: 'side',
+		            labelWidth: 75
+		        },	        
+		        defaultType: 'textfield',
+		        items: [{
+		            fieldLabel: '资源名称',
+		            name: 'resourceName',
+		            allowBlank: false
+		        },{
+		            fieldLabel: '资源代码',
+		            name: 'code',
+		            allowBlank: false
+		        },{
+		            fieldLabel: '上级资源',
+		            name: 'parentId'
+		        },{
+		            fieldLabel: '连接目标',
+		            name: 'target'
+		        }, {
+		            fieldLabel: '资源URL',
+		            name: 'url',
+		            allowBlank: false
+		        }, {
+		            fieldLabel: '资源排序',
+		            name: 'sortOrder'
+		        }, {
+		            fieldLabel: '资源描述',
+		            name: 'description'
+		        }],	
+		        buttons: [{
+		            text: 'Save',
+		            handler: function() {
+		            	this.up('form').getForm().submit();
+		            }
+		        },{
+		            text: 'Cancel',
+		            handler: function() {
+		                this.up('form').getForm().reset();
+		            }
+		        }]
+	        }]
+		});
+		addWindow.show();
+	}
 });
 </script>
 </head>

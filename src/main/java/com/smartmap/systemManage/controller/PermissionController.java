@@ -75,7 +75,7 @@ public class PermissionController {
   		while (iteratorResource.hasNext()) {
   			Resource resource = iteratorResource.next();
   			jsonObject = new JSONObject();
-  			ResourceUtil.recursionToJsonObject(resource, jsonObject);
+  			ResourceUtil.recursionToJsonObject(resource, operateList, jsonObject);
   			long operateCodes = resource.getOperateCodes();
   			OperateUtil.operateToJsonObject(operateCodes, operateList, jsonObject);
   			//

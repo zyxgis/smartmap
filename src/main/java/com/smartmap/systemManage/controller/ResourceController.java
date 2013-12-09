@@ -15,11 +15,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
+import com.smartmap.gis.model.Person;
 import com.smartmap.systemManage.controller.util.OperateUtil;
 import com.smartmap.systemManage.controller.util.ResourceUtil;
 import com.smartmap.systemManage.dao.OperateDao;
@@ -39,6 +43,36 @@ public class ResourceController {
 	@Autowired
 	private OperateDao operateDao;
 	
+	@RequestMapping(method=RequestMethod.GET,value="edit")
+	public String editResource(@RequestParam(value="id",required=false) Long id) {		
+		logger.debug("Received request to edit resource id : "+id);				
+		ModelAndView mav = new ModelAndView();		
+ 		mav.setViewName("edit");
+ 		Resource resource = null;
+ 		if (id == null) {
+ 			resource = new Resource();
+ 		} else {
+ 			resource = resourceDao.find(id);
+ 		}
+ 		
+ 		//
+  		String resultJson = "{\"status\":\"successful\"}";
+  		logger.info(resultJson);
+  		//
+  		return resultJson;
+	}
+	@Transactional
+	@RequestMapping(method=RequestMethod.POST,value="saveResource") 
+	public String saveResource(@ModelAttribute Resource resource) {		
+		logger.info("Received postback on resource "+resource);		
+		resource = resourceDao.save(resource);
+		//
+  		String resultJson = "{\"status\":\"successful\"}";
+  		logger.info(resultJson);
+  		//
+  		return resultJson;
+	}
+
 	/**
 	 * 查询所有资源
 	 * @param pageNo
@@ -55,7 +89,7 @@ public class ResourceController {
 		//
 		logger.info("page="+pageNo.toString());
 		logger.info("limit="+countPerPage.toString());
-		//		
+		//
 		String resultJson="";
   		List<Resource> resourceList = resourceDao.getAllResources();
   		Iterator<Resource> iteratorResource = resourceList.iterator();
@@ -159,7 +193,7 @@ public class ResourceController {
 		
 		String resultJson="";
   		List<Resource> resourceList = resourceDao.getAllResources();
-  		//List<Operate> operateList = operateDao.getAllOperates(null, null); 		
+  		List<Operate> operateList = operateDao.getAllOperates(null, null); 		
   		//
   		List<Resource> resourceRootList = new LinkedList<Resource>();
   		ResourceUtil.listToTree(resourceList, resourceRootList);
@@ -170,7 +204,7 @@ public class ResourceController {
   		while (iteratorResource.hasNext()) {
   			Resource resource = iteratorResource.next();
   			jsonObject = new JSONObject();
-  			ResourceUtil.recursionToJsonObject(resource, jsonObject);
+  			ResourceUtil.recursionToJsonObject(resource, operateList, jsonObject);
   			//
   			//long operateCodes = resource.getOperateCodes();
   	  		//OperateUtil.operateToJsonObject(operateCodes, operateList, jsonObject);

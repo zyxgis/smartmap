@@ -12,7 +12,7 @@ import com.smartmap.systemManage.model.Operate;
 import com.smartmap.systemManage.model.Resource;
 
 public class ResourceUtil {
-	public static void recursionToJsonObject(Resource resource, JSONObject jsonObject)
+	public static void recursionToJsonObject(Resource resource, List<Operate> operateList, JSONObject jsonObject)
 	{
   		jsonObject.put("id", resource.getId());
   		jsonObject.put("code", resource.getCode());
@@ -25,6 +25,10 @@ public class ResourceUtil {
   		jsonObject.put("sortOrder", resource.getSortOrder());
   		//jsonObject.put("parentName", resource.getParent()==null?"":resource.getParent().getName());
   		jsonObject.put("description", resource.getDescription());
+  		//
+  		long operateCodes = resource.getOperateCodes();
+		OperateUtil.operateToJsonObject(operateCodes, operateList, jsonObject);
+			
   		Set<Resource> resourceList = resource.getChildren();
   		if(resourceList.size()>0)
   		{
@@ -33,7 +37,7 @@ public class ResourceUtil {
 	  		while (iteratorResource.hasNext()) {
 	  			Resource resourceChild = iteratorResource.next();
 	  			JSONObject jsonObjectChild = new JSONObject();
-	  			recursionToJsonObject(resourceChild, jsonObjectChild);
+	  			recursionToJsonObject(resourceChild, operateList, jsonObjectChild);
 	  			jsonArray.add(jsonObjectChild);
 	  		}
 	  		jsonObject.put("children", jsonArray);

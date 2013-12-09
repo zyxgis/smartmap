@@ -8,7 +8,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
-
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
 import com.smartmap.systemManage.model.Resource;
 
 @Repository
@@ -32,6 +33,26 @@ public class ResourceDao {
 		List<Resource> resourceList = query.getResultList();
 		//返回结果
 		return resourceList;
+	}
+	
+	@Transactional
+	public Resource save(Resource resource) {
+		Resource resourceReturn = null;
+		//entityManager.getTransaction().begin();
+		try {
+			if (resource.getId() == null) {
+				entityManager.persist(resource);
+				resourceReturn = resource;				
+			} else {
+				resourceReturn = entityManager.merge(resource);
+			}
+			//entityManager.getTransaction().commit();
+			return resource;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
 	}
 	
 	@SuppressWarnings("unchecked")

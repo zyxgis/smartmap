@@ -39,5 +39,5 @@
 	
 	<context:component-scan base-package="com.smartmap" />
 		
-	
+	<tx:annotation-driven transaction-manager="transactionManager"/>
 </beans>
