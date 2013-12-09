@@ -157,7 +157,7 @@ var formPanel = new Ext.FormPanel({
 	    pageSize: itemsPerPage,
 	    proxy: {
 	        type: 'ajax',
-	        url: baseDataPath+'/user/queryUsersByUsername',
+	        url: baseDataPath+'/user/queryUsersByLoginUsername',
 	        extraParams: {username:""},
 	        reader: {
 	            type: 'json',

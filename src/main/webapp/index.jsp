@@ -39,7 +39,7 @@ Ext.onReady(function () {
 	var menuMain = new Ext.Toolbar({enableOverflow: true});	
 	Ext.Ajax.request({
 		method:"GET",
-	    url:baseDataPath+'/resource/queryResourcesByUserId',  
+	    url:baseDataPath+'/permission/queryResourcesByUserId',  
 	    params:{  
       		userId:queryStringParamObject.userId
 	    },

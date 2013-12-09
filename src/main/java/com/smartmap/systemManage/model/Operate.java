@@ -23,8 +23,8 @@ public class Operate {
     private String operateName;
         
     /**操作代码*/
-    @Column(length=64)
-    private String code;
+    @Column
+    private Long code;
     
     /**
      * 创建日期
@@ -60,11 +60,11 @@ public class Operate {
 		this.operateName = operateName;
 	}
 
-	public String getCode() {
+	public Long getCode() {
 		return code;
 	}
 
-	public void setCode(String code) {
+	public void setCode(Long code) {
 		this.code = code;
 	}
 

@@ -31,16 +31,16 @@ public class LoginController {
 	@RequestMapping(method=RequestMethod.POST,value="login",produces="text/plain;charset=UTF-8")
     @ResponseBody
     public ModelAndView login(
-    		@RequestParam(value="username",required=false) String username,    		
-    		@RequestParam(value="password",required=false) String password) 
+    		@RequestParam(value="loginUsername",required=false) String loginUsername,    		
+    		@RequestParam(value="loginPassword",required=false) String loginPassword) 
     				throws UnsupportedEncodingException{
 		//取出参数
-		logger.info("username="+username);
-		logger.info("password="+password);
+		logger.info("loginUsername="+loginUsername);
+		logger.info("loginPassword="+loginPassword);
 		User user = null;
   		String returnUrl=null;
   		//查询数据库
-  		List<User> userList = userDao.getUsersByUsername(null, null, username);  		
+  		List<User> userList = userDao.getUsersByLoginUsername(null, null, loginPassword);  		
   		//
   		if(userList==null || userList.size()==0)
   		{
@@ -49,7 +49,7 @@ public class LoginController {
   		else
   		{
   			user = userList.get(0);
-  			if(!user.getLoginPassword().equals(password))
+  			if(!user.getLoginPassword().equals(loginPassword))
   			{
   				returnUrl = "../../login.jsp";
   			}
@@ -64,7 +64,7 @@ public class LoginController {
   		{
   			modelAndView.addObject("userId", user.getId().toString());
   		}
-  		logger.debug(redirectView.getUrl());
+  		logger.info(redirectView.getUrl());
 		return  modelAndView;
 	}
 }

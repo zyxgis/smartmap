@@ -45,8 +45,8 @@ public class ResourceDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Resource> getResourceByParentResourceId(Long parentId) {
-		String baseJQL = "SELECT a FROM Resource a WHERE a.parent.id = :parentId";
+	public List<Resource> getResourceByParentId(Long parentId) {
+		String baseJQL = "SELECT a FROM Resource a WHERE a.parentId = :parentId";
 		baseJQL += " ORDER BY a.sortOrder";
 		Query query = entityManager.createQuery(baseJQL);
 		if(parentId != null)
@@ -58,18 +58,5 @@ public class ResourceDao {
 		return resourceList;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<Resource> getResourceByUserId(Integer pageNo, Integer countPerPage, Long userId) {
-		String baseJQL = "SELECT DISTINCT a FROM Resource a RIGHT OUTER JOIN a.operators b LEFT OUTER JOIN b.roles c Left Outer join c.users d WHERE d.id = :userId";
-		baseJQL += " ORDER BY a.parent, a.sortOrder, a.id";
-		Query query = entityManager.createQuery(baseJQL);
-		//
-		if(userId != null)
-		{
-			query.setParameter("userId", userId);
-		}
-		//
-		List<Resource> resourceList = query.getResultList();		
-		return resourceList;
-	}
+	
 }

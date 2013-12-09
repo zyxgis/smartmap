@@ -63,7 +63,9 @@ public class Resource {
     @Column(length=256)
     private String description;
 
-    
+    /**操作码组合*/
+    @Column
+    private Long operateCodes;
     
     @Transient
     private Set<Resource> children = null;
@@ -75,6 +77,10 @@ public class Resource {
     
     
     
+	public Resource() {
+		super();		
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -169,6 +175,14 @@ public class Resource {
 
 	public void setParent(Resource parent) {
 		this.parent = parent;
+	}
+
+	public Long getOperateCodes() {
+		return operateCodes;
+	}
+
+	public void setOperateCodes(Long operateCodes) {
+		this.operateCodes = operateCodes;
 	}
    
     

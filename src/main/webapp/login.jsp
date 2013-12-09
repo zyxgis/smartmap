@@ -43,7 +43,7 @@ Ext.onReady(function () {
 	    items: [
 	        {
 	        	fieldLabel: '登录帐号',
-				name: 'username',
+				name: 'loginUsername',
 				regex: /^[0-9a-zA-Z]{2,20}$/,
 				regexText: '只能为两到六位的大小写字母。',
 	            allowBlank: false,	            
@@ -51,7 +51,7 @@ Ext.onReady(function () {
 	        },
 	        {
 	        	fieldLabel: '登录密码',
-				name: 'password',
+				name: 'loginPassword',
 				inputType: 'password',
 				regex: /^.{4,}$/,
 				regexText: '长度不能少于4位',

@@ -37,8 +37,6 @@ public class UserController {
 	@Autowired
 	private UserDao userDao;
 	
-	@Autowired
-	private RoleDao roleDao;
 	/**
 	 * 
 	 * @param pageNo
@@ -52,6 +50,10 @@ public class UserController {
     		@RequestParam(value="page",required=false) Integer pageNo,    		
     		@RequestParam(value="limit",required=false) Integer countPerPage)
     				throws UnsupportedEncodingException{
+		//
+		logger.info("page="+pageNo.toString());
+		logger.info("limit="+countPerPage.toString());
+		//		
   		String resultJson="";  		
   		List<User> userList = userDao.getAllUsers(pageNo, countPerPage);
   		Iterator<User> iteratorUser = userList.iterator();
@@ -64,13 +66,15 @@ public class UserController {
   			User user = iteratorUser.next();
   			jsonObject = new JSONObject();
   	  		jsonObject.put("id", user.getId());
+  	  		jsonObject.put("loginUsername", user.getLoginUsername());
+  	  		jsonObject.put("loginPassword", user.getLoginPassword());
   	  		
   	  		jsonArray.add(jsonObject);
   		}
   		jsonObjectResult.put("data", jsonArray);
   		//
   		resultJson = jsonArray.toString();
-  		System.out.println(resultJson);
+  		logger.info(resultJson);
   		return resultJson;
     }
 	
@@ -81,15 +85,21 @@ public class UserController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(method=RequestMethod.GET,value="queryUsersByUsername",produces="text/plain;charset=UTF-8")
+	@RequestMapping(method=RequestMethod.GET,value="queryUsersByLoginUsername",produces="text/plain;charset=UTF-8")
     @ResponseBody  
-    public String queryUsersByUsername(
+    public String queryUsersByLoginUsername(
     		@RequestParam(value="page",required=false) Integer pageNo,    		
     		@RequestParam(value="limit",required=false) Integer countPerPage,
-    		@RequestParam(value="username",required=false) String username)
+    		@RequestParam(value="loginUsername",required=false) String loginUsername)
     				throws UnsupportedEncodingException{
+		//
+		//logger.info("page="+pageNo.toString());
+		//logger.info("limit="+countPerPage.toString());
+		//logger.info("loginUsername="+loginUsername.toString());
+		//
+		
   		String resultJson="";  		
-  		List<User> userList = userDao.getUsersByUsername(pageNo, countPerPage, username);
+  		List<User> userList = userDao.getUsersByLoginUsername(pageNo, countPerPage, loginUsername);
   		Iterator<User> iteratorUser = userList.iterator();
   		JSONObject jsonObjectResult = new JSONObject();
   		jsonObjectResult.put("totalCount", 15);
@@ -100,13 +110,14 @@ public class UserController {
   			User user = iteratorUser.next();
   			jsonObject = new JSONObject();
   	  		jsonObject.put("id", user.getId());
-  	  		
+  	  		jsonObject.put("loginUsername", user.getLoginUsername());
+	  		jsonObject.put("loginPassword", user.getLoginPassword());
   	  		jsonArray.add(jsonObject);
   		}
   		jsonObjectResult.put("data", jsonArray);
   		//
   		resultJson = jsonArray.toString();
-  		System.out.println(resultJson);
+  		logger.info(resultJson);
   		return resultJson;
     }
 	
@@ -125,10 +136,11 @@ public class UserController {
     		@RequestParam(value="limit",required=false) Integer countPerPage,
     		@RequestParam(value="roleId",required=false) Long roleId)
     				throws UnsupportedEncodingException{
+		//
 		logger.info("page="+pageNo.toString());
 		logger.info("limit="+countPerPage.toString());
 		logger.info("roleId="+roleId.toString());
-		
+		//
   		String resultJson="";  		
   		List<User> userList = userDao.getUsersByRoleId(pageNo, countPerPage, roleId);
   		Iterator<User> iteratorUser = userList.iterator();
@@ -141,7 +153,8 @@ public class UserController {
   			User user = iteratorUser.next();
   			jsonObject = new JSONObject();
   	  		jsonObject.put("id", user.getId());
-  	  		
+	  	  	jsonObject.put("loginUsername", user.getLoginUsername());
+	  		jsonObject.put("loginPassword", user.getLoginPassword());
   	  		jsonArray.add(jsonObject);
   		}
   		jsonObjectResult.put("data", jsonArray);
@@ -151,18 +164,17 @@ public class UserController {
   		return resultJson;
     }
 	
-	@RequestMapping(method=RequestMethod.GET,value="addUserRoles",produces="text/plain;charset=UTF-8")
+	@RequestMapping(method=RequestMethod.GET,value="grandUserRoles",produces="text/plain;charset=UTF-8")
     @ResponseBody  
-	public int addUserRoles(Long userId, List<Long> roleIdArray) {
-		User user = userDao.find(userId);
-		List<Role> roleList = roleDao.findByIdArray(roleIdArray);
-		Set<Role> roleSet = new HashSet<Role>();
-		for(int i=0; i<roleList.size(); i++)
-		{
-			roleSet.add(roleList.get(i));
-		}
-		User userSaved = userDao.save(user);
-		return 0;
-		
+	public int grandUserRoles(Long userId, List<Long> roleIdArray) {
+		//
+		logger.info("userId="+userId.toString());
+		logger.info("roleIdArray="+roleIdArray.toString());
+		//
+		int countRevoke = userDao.revokeRoles(userId, null);
+		int countGrand = userDao.grandRoles(userId, roleIdArray);	
+		logger.info("countRevoke="+countRevoke);
+		logger.info("countGrand="+countGrand);
+		return countRevoke+countGrand;		
 	}
 }
