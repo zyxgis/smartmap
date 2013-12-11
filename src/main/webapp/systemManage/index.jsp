@@ -58,7 +58,7 @@ var viewport = new Ext.Viewport({
            {
              region: 'center',
              contentEl: 'center',
-             html: '<iframe align="" frameborder="0" height="100%" width="100%" marginheight="0px" marginwidth="0px" scrolling="no" src="userManage.jsp"></iframe>'             
+             html: '<iframe align="" frameborder="0" height="100%" width="100%" marginheight="0px" marginwidth="0px" scrolling="no" src="permissionControl/userManage.jsp"></iframe>'             
            }
         ]
     });

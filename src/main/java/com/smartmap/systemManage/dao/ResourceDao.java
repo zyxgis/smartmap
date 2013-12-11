@@ -1,6 +1,7 @@
 package com.smartmap.systemManage.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -10,6 +11,7 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;
+
 import com.smartmap.systemManage.model.Resource;
 
 @Repository
@@ -38,9 +40,12 @@ public class ResourceDao {
 	@Transactional
 	public Resource save(Resource resource) {
 		Resource resourceReturn = null;
+		Date date = new Date(java.lang.System.currentTimeMillis());
+		resource.setLastUpdate(date);
 		//entityManager.getTransaction().begin();
 		try {
-			if (resource.getId() == null) {
+			if (resource.getId() == null) {				
+				resource.setCreateTime(date);				
 				entityManager.persist(resource);
 				resourceReturn = resource;				
 			} else {

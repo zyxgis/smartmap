@@ -206,8 +206,8 @@ public class ResourceController {
   			jsonObject = new JSONObject();
   			ResourceUtil.recursionToJsonObject(resource, operateList, jsonObject);
   			//
-  			//long operateCodes = resource.getOperateCodes();
-  	  		//OperateUtil.operateToJsonObject(operateCodes, operateList, jsonObject);
+  			long operateCodes = resource.getOperateCodes();
+  	  		OperateUtil.operateToJsonObject(operateCodes, operateList, jsonObject);
   	  		//
   	  		jsonArray.add(jsonObject);
   		}

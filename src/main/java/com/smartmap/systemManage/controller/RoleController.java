@@ -135,7 +135,7 @@ public class RoleController {
 		//
 		logger.info("page="+pageNo.toString());
 		logger.info("limit="+countPerPage.toString());
-		logger.info("roleName="+roleName.toString());
+		//logger.info("roleName="+roleName.toString());
 		//	
   		String resultJson="";
   		List<Role> roleList = roleDao.getRolesByRoleName(pageNo, countPerPage, roleName);

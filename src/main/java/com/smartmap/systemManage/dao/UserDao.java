@@ -113,6 +113,7 @@ public class UserDao {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Transactional
 	public Integer revokeRoles(Long userId, List<Long> roleIdList) {		
 		if(userId == null)return 0;
 		String baseJQL = "DELETE FROM SysUserRole WHERE userID = :userID ";	
@@ -134,21 +135,20 @@ public class UserDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Integer grandRoles(Long userId, List<Long> roleIdList) {		
-		if(userId == null || roleIdList == null || roleIdList.size()==0)return 0;
+	@Transactional
+	public Integer grandRoles(Long userId, Long[] roleIdList) {		
+		if(userId == null || roleIdList == null || roleIdList.length==0)return 0;
 		String baseJQL = "INSERT INTO SysUserRole(userID, roleID) VALUES(:userID, :roleID)";	
 		//
 		FlushModeType flushModeType = entityManager.getFlushMode();
-		entityManager.setFlushMode(FlushModeType.COMMIT); 
-		EntityTransaction entityTransaction = entityManager.getTransaction();
-		entityTransaction.begin();
+		entityManager.setFlushMode(FlushModeType.COMMIT);
 		int batchSize = 100;
 		int countAll = 0;	
 		Query query = entityManager.createNativeQuery(baseJQL);
-		for(int i=0; i<roleIdList.size(); i++)
+		for(int i=0; i<roleIdList.length; i++)
 		{
 			query.setParameter("userID", userId);
-			query.setParameter("roleID", roleIdList.get(i));
+			query.setParameter("roleID", roleIdList[i]);
 			//执行查询
 			int count = query.executeUpdate();
 			countAll += count;
@@ -157,7 +157,6 @@ public class UserDao {
 				entityManager.clear();
 			} 
 		}
-		entityTransaction.commit(); 
 		entityManager.setFlushMode(flushModeType); 
 		//返回结果
 		return countAll;

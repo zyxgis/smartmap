@@ -91,7 +91,7 @@ public class PermissionController {
 	
 	@RequestMapping(method=RequestMethod.GET,value="grandRoleResources",produces="text/plain;charset=UTF-8")
     @ResponseBody  
-	public int grandRoleResources(Long roleId, List<Long> resourceIdArray, List<Long> operateCodesArray) {
+	public int grandRoleResources(Long roleId, Long[] resourceIdArray, Long[] operateCodesArray) {
 		//
 		logger.info("roleId="+roleId.toString());
 		logger.info("resourceIdArray="+resourceIdArray.toString());

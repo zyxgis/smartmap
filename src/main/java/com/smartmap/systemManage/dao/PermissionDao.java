@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.smartmap.systemManage.model.Resource;
 import com.smartmap.systemManage.model.User;
@@ -56,6 +57,7 @@ public class PermissionDao {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Transactional
 	public Integer revokeResources(Long roleId, List<Long> resourceIdList) {
 		if(roleId == null)return 0;
 		String baseJQL = "DELETE FROM SysPermission WHERE roleID = :roleID ";	
@@ -77,31 +79,32 @@ public class PermissionDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Integer grandResources(Long roleId, List<Long> resourceIdList, List<Long> operateCodesList) {		
-		if(roleId == null || resourceIdList == null || resourceIdList.size()==0)return 0;
+	@Transactional
+	public Integer grandResources(Long roleId, Long[] resourceIdList, Long[] operateCodesList) {
+		if(roleId == null || resourceIdList == null || resourceIdList.length==0)return 0;
 		String baseJQL = "INSERT INTO SysPermission(roleID, resourceID, operateCodes) VALUES(:roleID, :resourceID, :operateCodes)";	
 		//
 		FlushModeType flushModeType = entityManager.getFlushMode();
 		entityManager.setFlushMode(FlushModeType.COMMIT); 
-		EntityTransaction entityTransaction = entityManager.getTransaction();
-		entityTransaction.begin();
+		//EntityTransaction entityTransaction = entityManager.getTransaction();
+		//entityTransaction.begin();
 		int batchSize = 100;
-		int countAll = 0;	
+		int countAll = 0;
 		Query query = entityManager.createNativeQuery(baseJQL);
-		for(int i=0; i<resourceIdList.size(); i++)
+		for(int i=0; i<resourceIdList.length; i++)
 		{
 			query.setParameter("roleID", roleId);
-			query.setParameter("resourceID", resourceIdList.get(i));
-			query.setParameter("operateCodes", operateCodesList.get(i));
+			query.setParameter("resourceID", resourceIdList[i]);
+			query.setParameter("operateCodes", operateCodesList[i]);
 			//执行查询
 			int count = query.executeUpdate();
 			countAll += count;
-			if( i % batchSize  == 0 ){
+			if(i % batchSize == 0){
 				entityManager.flush();
 				entityManager.clear();
 			} 
 		}
-		entityTransaction.commit(); 
+		//entityTransaction.commit(); 
 		entityManager.setFlushMode(flushModeType); 
 		//返回结果
 		return countAll;

@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ include file="../include/ext.jsp" %>
+<%@ include file="../../include/ext.jsp" %>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -52,87 +52,46 @@ var formPanel = new Ext.FormPanel({
         layout : "column", // 从左往右的布局
         items : [{
            xtype: 'fieldcontainer',
-           columnWidth : .3, // 该列有整行中所占百分比           
+           columnWidth : .5, // 该列有整行中所占百分比           
            layout : "form", // 从上往下的布局      
            frame:true,
            border:false,
            bodyBorder:false,
            items : [{
               xtype : "textfield",              
-              fieldLabel: '用户名',
-              name: 'userName',
+              fieldLabel: '角色名',
+              name: 'roleName',
               emptyText: '请输入',
               width : 120
              }]
           }, {
            xtype: 'fieldcontainer',
-           columnWidth : .3,
+           columnWidth : .5,
            layout : "form",
            border:false,
            bodyBorder:false,
            items : [{        	  
               xtype : "textfield",
               fieldLabel: '登录名',
-              name: 'account',
+              name: 'username',
               emptyText: '请输入',
               width : 120
              }]
-          }, 
-          {
-              xtype: 'fieldcontainer',
-              columnWidth : .3,
-              layout : "form",
-              border:false,
-              bodyBorder:false,
-              items : [{        	  
-                 xtype : "textfield",
-                 fieldLabel: '部门',
-                 name: 'department',
-                 emptyText: '请选择',
-                 width : 120
-                }]
-             }/*, {
-           xtype: 'fieldcontainer',
-           columnWidth : .3,
-           layout : "form",
-           border:false,
-           bodyBorder:false,           
-           items : [{
-        	   xtype:'checkbox',
-               fieldLabel: '是否禁用',
-               name: 'forbidden',
-              width : 120
-             }]
-          }*/]
+          }]
        }],
          buttons: [{
             text: '查询',
             scope: this,
             handler: function() {               
                var form = formPanel.getForm();
-               var username = form.findField('userName').getValue();
+               var roleName = form.findField('roleName').getValue(); 
+               //gridPanel.store.currentPage=1;
                var proxy = gridPanel.store.getProxy();
-               proxy.setExtraParam("username", username);
+               if(roleName!="")
+            	{
+            	   proxy.setExtraParam("roleName", roleName);
+            	}               
                gridPanel.store.loadPage(1);
-               /*
-               var conn = new Ext.data.Connection();  
-		       conn.request({  
-			       url: baseDataPath+'/user/queryUsersByRoleId?limit=10&page=1',   
-			       params: {roleId:2},
-			       method: 'get',
-			       scope: this,
-			       callback:function(options,success, response){   
-			       if(success){   
-				       //Ext.MessageBox.alert("提示","所选记录成功删除！");  
-				       store.reload();  
-				       gridPanel.store.reload();
-			       }   
-			       else   
-			       { 
-			       	   Ext.MessageBox.alert("提示","所选记录删除失败！");}   
-			       }
-		       }); 
-		       */
            }
         },{
             text: '清除',
@@ -140,7 +99,7 @@ var formPanel = new Ext.FormPanel({
             handler: function() {
                formPanel.getForm().reset();               
            }
-        }]    
+        }]
 	});
 	//
 	function showUrl(value) 
@@ -152,13 +111,13 @@ var formPanel = new Ext.FormPanel({
 	var store = Ext.create('Ext.data.Store', {
 	    id:'store',
 	    autoLoad: false,
-	    fields:['id', 'account', 'password', 'userName', 'departmentName'],
+	    fields:['id', 'code', 'name', 'superRole', 'description'],
 	    remoteSort: true,
 	    pageSize: itemsPerPage,
 	    proxy: {
 	        type: 'ajax',
-	        url: baseDataPath+'/user/queryUsersByLoginUsername',
-	        extraParams: {username:""},
+	        url: baseDataPath+'/role/queryRolesByRoleName',
+	        extraParams: {userId:""},
 	        reader: {
 	            type: 'json',
 	            root: 'data',
@@ -170,36 +129,31 @@ var formPanel = new Ext.FormPanel({
     var gridPanel = new Ext.grid.Panel({
         //title: '用户信息',
         columns: [
-			{
-			    text: '编号',
-			    dataIndex: 'id',
-			    width: 100
-			},
 		    {
-		        text: '登录名',
-		        dataIndex: 'account',
+		        text: '编号',
+		        dataIndex: 'code',
 		        width: 150
 		    },
 		    {
-		        text: '密码',
-		        dataIndex: 'password',
+		        text: '角色名',
+		        dataIndex: 'name',
 		        hidden: false,
 		        width: 150
 		    },
 		    {
-		        text: '用户名',
-		        dataIndex: 'userName',
+		        text: '超级角色',
+		        dataIndex: 'superRole',
 		        width: 150
 		    },
 		    {
-		        text: '部门',
-		        dataIndex: 'departmentName',		        
+		        text: '描述',
+		        dataIndex: 'description',		        
 		        renderer:showUrl,
 		        flex: 1
 		    }
     	],
 		store: store,
-        renderTo: 'gridUser',
+        renderTo: 'grid',
         dockedItems: [{
 	        xtype: 'pagingtoolbar',
 	        store: store,
@@ -218,10 +172,6 @@ var formPanel = new Ext.FormPanel({
 	    	xtype:'buttongroup',
             items: [{text: '修改',
 	        iconCls: 'editIcon'
-	    }]},'-',{
-	    	xtype:'buttongroup',
-            items: [{text: '初始化密码',
-	        iconCls: 'findIcon'
 	    }]}]
     });
 	//
@@ -241,7 +191,7 @@ var formPanel = new Ext.FormPanel({
 <body>
 	<div id="form">  
 	</div>
-	<div id="gridUser">        
+	<div id="grid">        
 	</div>
 </body>
 </html>

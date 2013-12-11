@@ -166,7 +166,7 @@ public class UserController {
 	
 	@RequestMapping(method=RequestMethod.GET,value="grandUserRoles",produces="text/plain;charset=UTF-8")
     @ResponseBody  
-	public int grandUserRoles(Long userId, List<Long> roleIdArray) {
+	public int grandUserRoles(@RequestParam(value="userId",required=false) Long userId, @RequestParam(value="roleIdArray",required=false) Long[] roleIdArray) {
 		//
 		logger.info("userId="+userId.toString());
 		logger.info("roleIdArray="+roleIdArray.toString());

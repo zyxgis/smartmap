@@ -2,7 +2,7 @@
 <%@ page session="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ include file="../include/ext.jsp" %>
+<%@ include file="../../include/ext.jsp" %>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -10,6 +10,7 @@
 <link rel="stylesheet" type="text/css" href="<%=extPath%>/resources/css/ext-all.css"/>
 <script type="text/javascript" src="<%=extPath%>/ext-all-debug.js"></script>
 <script type="text/javascript" src="<%=extPath%>/locale/ext-lang-zh_CN.js"></script>
+<script type="text/javascript" src="<%=basePath%>/scripts/commonComponent/comboBoxTree.js"></script>
 <style type="text/css"> 
    html,body {
      height:100%; 
@@ -53,7 +54,7 @@ Ext.onReady(function () {
 	    pageSize: itemsPerPage,
 	    proxy: {
 	        type: 'ajax',
-	        url: baseDataPath+'/resource/queryResourcesByParentResourceId',
+	        url: baseDataPath+'/resource/queryResourcesByParentId',
 	        reader: {
 	            type: 'json',
 	            root: 'data',
@@ -162,47 +163,150 @@ Ext.onReady(function () {
 	function showAdd() {
 		var addWindow = new Ext.Window({
 			title: '添加菜单',
-			id: 'addWindow',
-	        x: 450,
-	        y: 200,
-	        height:300,
+			id: 'addWindow',	       
+	        height:360,
 	        width: 350,
-	        layout: 'form',
-	        items:[{	        	
-	        	xtype: 'form',		        
-		        url: baseDataPath+'/resource/saveResource',
-		        frame: true,	       
-		        bodyPadding: '5 5 0',		       
-		        fieldDefaults: {
-		            msgTarget: 'side',
-		            labelWidth: 75
-		        },	        
-		        defaultType: 'textfield',
-		        items: [{
-		            fieldLabel: '资源名称',
-		            name: 'resourceName',
-		            allowBlank: false
-		        },{
-		            fieldLabel: '资源代码',
-		            name: 'code',
-		            allowBlank: false
-		        },{
-		            fieldLabel: '上级资源',
-		            name: 'parentId'
-		        },{
-		            fieldLabel: '连接目标',
-		            name: 'target'
-		        }, {
-		            fieldLabel: '资源URL',
-		            name: 'url',
-		            allowBlank: false
-		        }, {
-		            fieldLabel: '资源排序',
-		            name: 'sortOrder'
-		        }, {
-		            fieldLabel: '资源描述',
-		            name: 'description'
-		        }],	
+	        layout: 'fit', 
+	        items:[{
+				  xtype: 'form',
+				  url: baseDataPath+'/resource/saveResource',
+				  //frame:true,
+				  bodyBorder:false,
+				  border: 0,
+				  buttonAlign: 'center',
+				  layout: 'anchor',
+				  defaults: {
+				    anchor: '100%'
+				  },
+				  fieldDefaults: {
+				    msgTarget: 'side',
+				    labelWidth: 75
+				  },
+				  defaultType: 'textfield',
+				  items: {
+			            xtype:'tabpanel',
+			            activeTab: 0,
+			            defaults:{
+			                bodyPadding: 10,
+			                layout: 'anchor'
+			            },
+			            //frame:true,
+			            bodyBorder:false,
+			            border: 0,
+			            items:[{
+			                title:'菜单基本信息',
+			                defaultType: 'textfield',
+			                defaults: {
+			                    anchor: '100%'
+			                },
+			                bodyBorder:false,
+				            border: 0,
+			                items: [{
+			                    fieldLabel: '菜单名称',
+			                    name: 'resourceName',
+			                    allowBlank: false
+			                  },
+			                  {
+			                    fieldLabel: '菜单代码',
+			                    name: 'code',
+			                    allowBlank: false
+			                  },
+			                  {
+			                    fieldLabel: '上级菜单',
+			                    name: 'parentId',
+			                    xtype: 'treecombox',
+			                    align: 'center',
+			                    displayField: 'text',
+			                    valueField: 'id',
+			                    store: Ext.create('Ext.data.TreeStore',
+			                    {
+			                      fields: [
+			                        'id',
+			                        'text'
+			                      ],
+			                      autoLoad: true,
+			                      root: {
+			                        text: '系统',
+			                        id: '',
+			                        expanded: true
+			                      },
+			                      proxy: {
+			                        type: 'ajax',
+			                        url: baseDataPath+'/resource/queryAllResourcesToTree'
+			                      }
+			                    })
+			                  },
+			                  {
+			                    fieldLabel: '连接目标',
+			                    name: 'target',
+			                    xtype: 'combobox',
+			                    queryMode: 'local',
+			                    displayField: 'name',
+			                    valueField: 'value',
+			                    store: Ext.create('Ext.data.Store',
+			                    {
+			                      fields: [
+			                        'value',
+			                        'name'
+			                      ],
+			                      data: [
+			                        {
+			                          "value": "iframe",
+			                          "name": "iframe"
+			                        },
+			                        {
+			                          "value": "javascript",
+			                          "name": "javascript"
+			                        },
+			                        {
+			                          "value": "click",
+			                          "name": "click"
+			                        }
+			                      ]
+			                    })
+			                  },
+			                  {
+			                    fieldLabel: '菜单内容',
+			                    name: 'url',
+			                    xtype: 'textareafield',
+			                    grow: true,
+			                    allowBlank: false
+			                  },
+			                  {
+			                    fieldLabel: '菜单排序',
+			                    name: 'sortOrder'
+			                  },
+			                  {
+			                    fieldLabel: '描述',
+			                    name: 'description',
+			                    xtype: 'textareafield',
+			                    grow: true,
+			                    anchor: '100%'
+			                  }]
+			            },{
+			            	title: '菜单操作',
+			                //defaultType: 'textfield',
+			                //frame:true,
+			                defaults: {
+			                    anchor: '100%'
+			                },
+			                bodyBorder:false,
+				            border: 0,
+			                items: [{
+			                	 xtype: 'checkboxgroup',
+			                     //fieldLabel: 'Multi-Column (horizontal)',
+			                     //cls: 'x-check-group-alt',
+			                     columns: 3,
+			                     items: [
+			                         {boxLabel: 'Item 1', name: 'rb-horiz-1', inputValue: 1},
+			                         {boxLabel: 'Item 2', name: 'rb-horiz-1', inputValue: 2, checked: true},
+			                         {boxLabel: 'Item 3', name: 'rb-horiz-1', inputValue: 3},
+			                         {boxLabel: 'Item 4', name: 'rb-horiz-2', inputValue: 1, checked: true},
+			                         {boxLabel: 'Item 5', name: 'rb-horiz-2', inputValue: 2}
+			                     ]
+			                }]
+			            }]
+			        },
 		        buttons: [{
 		            text: 'Save',
 		            handler: function() {
