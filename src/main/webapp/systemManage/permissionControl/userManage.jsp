@@ -172,7 +172,7 @@ var formPanel = new Ext.FormPanel({
 	});
 	//
     var gridPanel = new Ext.grid.Panel({
-        //title: '用户信息',
+        title: '用户列表',
         columns: [
 			{
 			    text: '编号',
@@ -212,6 +212,10 @@ var formPanel = new Ext.FormPanel({
 	    }],
 	    tbar: [{
 	    	xtype:'buttongroup',
+            items: [{text: '刷新',
+	        iconCls: 'findIcon'
+	    }]},'-',{
+	    	xtype:'buttongroup',
             items: [{text: '添加',
 	        iconCls: 'addIcon'
 	    }]},{
@@ -224,7 +228,15 @@ var formPanel = new Ext.FormPanel({
 	        iconCls: 'editIcon'
 	    }]},'-',{
 	    	xtype:'buttongroup',
-            items: [{text: '初始化密码',
+            items: [{text: '查看详细',
+	        iconCls: 'findIcon'
+	    }]},{
+	    	xtype:'buttongroup',
+            items: [{text: '重置密码',
+	        iconCls: 'findIcon'
+	    }]},{
+	    	xtype:'buttongroup',
+            items: [{text: '分配角色',
 	        iconCls: 'findIcon'
 	    }]}]
     });

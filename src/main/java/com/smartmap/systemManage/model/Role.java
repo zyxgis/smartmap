@@ -33,9 +33,26 @@ public class Role implements Serializable {
     @Column(length=64)
     private String roleName;
         
+    /**所属组织*/
+    private Long organizationId;
+    
+    @Transient
+    private String organizationName;
+    
+    /**角色类别*/
+    @Column(length=64)
+    private String roleType;
+    
     /**父角色*/
     @Column
     private Long parentId;
+    
+    @Transient
+    private Set<Role> children = null;
+    
+    @Transient
+    private Role parent = null;
+    
     
     /**
      * 创建日期
@@ -55,12 +72,6 @@ public class Role implements Serializable {
     @Column(length=256)
     private String description;
 
-    
-    @Transient
-    private Set<Role> children = null;
-    
-    @Transient
-    private Role parent = null;
     
     
     
@@ -135,6 +146,30 @@ public class Role implements Serializable {
 
 	public void setParent(Role parent) {
 		this.parent = parent;
+	}
+
+	public Long getOrganizationId() {
+		return organizationId;
+	}
+
+	public void setOrganizationId(Long organizationId) {
+		this.organizationId = organizationId;
+	}
+
+	public String getOrganizationName() {
+		return organizationName;
+	}
+
+	public void setOrganizationName(String organizationName) {
+		this.organizationName = organizationName;
+	}
+
+	public String getRoleType() {
+		return roleType;
+	}
+
+	public void setRoleType(String roleType) {
+		this.roleType = roleType;
 	}
     
     

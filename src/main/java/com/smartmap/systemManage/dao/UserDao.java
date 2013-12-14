@@ -13,6 +13,7 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.smartmap.systemManage.model.Employee;
 import com.smartmap.systemManage.model.User;
 
 @Repository
@@ -160,5 +161,32 @@ public class UserDao {
 		entityManager.setFlushMode(flushModeType); 
 		//返回结果
 		return countAll;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<User> getByOrganizationId(Long organizationId) {
+		String baseJQL = "SELECT a FROM User a WHERE a.organizationId = :organizationId";
+		baseJQL += " ORDER BY a.id";
+		Query query = entityManager.createQuery(baseJQL);
+		if(organizationId != null)
+		{
+			query.setParameter("organizationId", organizationId);
+		}
+		
+		List<User> userList = query.getResultList();		
+		return userList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<User> getByOrganizationIds(List<Long> organizationIdList) {		
+		String baseJQL = "SELECT a FROM User a where a.organizationId in(:organizationIds)";
+		baseJQL += " ORDER BY a.id";
+		Query query = entityManager.createQuery(baseJQL);
+		if(organizationIdList != null)
+		{
+			query.setParameter("organizationIds", organizationIdList);
+		}		
+		List<User> userList = query.getResultList();		
+		return userList;
 	}
 }

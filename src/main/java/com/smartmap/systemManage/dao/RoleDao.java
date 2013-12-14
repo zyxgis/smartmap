@@ -10,6 +10,7 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.smartmap.systemManage.model.Employee;
 import com.smartmap.systemManage.model.Role;
 import com.smartmap.systemManage.model.User;
 
@@ -107,4 +108,18 @@ public class RoleDao {
 		return roleList;
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	public List<Role> getByOrganizationId(Long organizationId) {
+		String baseJQL = "SELECT a FROM Role a WHERE a.organizationId = :organizationId";
+		baseJQL += " ORDER BY a.id";
+		Query query = entityManager.createQuery(baseJQL);
+		if(organizationId != null)
+		{
+			query.setParameter("organizationId", organizationId);
+		}
+		
+		List<Role> roleList = query.getResultList();		
+		return roleList;
+	}
 }

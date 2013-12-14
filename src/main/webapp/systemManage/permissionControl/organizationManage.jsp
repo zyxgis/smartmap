@@ -38,14 +38,37 @@ Ext.onReady(function () {
 	    //autoLoad: false,
         proxy: {
             type: 'ajax',
-            url: baseDataPath+'/resource/queryAllResourcesToTree'
+            url: baseDataPath+'/organization/queryAllToTree'
         },
         root: {
-            text: 'Ext JS',
-            id: 'src',
-            expanded: false
-        }
-    });		
+        	id: 'root',
+            text: 'root',
+            parentId: null,
+            leaf: false,            
+            expanded: true
+        },
+        fields: [{
+            name: "id"
+        }, {
+            name: "code"
+        }, {
+            name: "name"
+        }, {
+            name: "text"
+        }, {
+            name: "leaf"
+        },  {
+            name: "category"
+        }, {
+            name: "createTime",
+            type: 'date',
+            dateFormat: 'timestamp'
+        }, {
+            name: "lastUpdate",
+            type: 'date',
+            dateFormat: 'timestamp'
+        }]
+    });
 	//
 	var store = new Ext.data.Store({
 	    autoLoad: false,
@@ -63,93 +86,137 @@ Ext.onReady(function () {
 	    }
 	});	
 	//
-	var viewport = new Ext.Viewport({
+	var viewport = new Ext.Viewport({		
+        defaults: { margins: '0 0 0 0' },
         layout: {
             type: 'border',
             padding: '0'
         },
-        defaults: { margins: '0 0 0 0' },        
-        items: [
-         	{
-         		id:'treepanel',
-         		title: '机构管理',
-	         	region: 'west',
-	         	xtype: 'treepanel',
-	         	split: true,
-	         	width: 300,
-			    minWidth: -20,
-			    maxWidth: 300,
-			    collapsible: true,
-			    animCollapse: false,
-			    collapseMode:'mini',
-	    		useArrows : true,
-	    		rootVisible: false,
-	    		store: treeStore,
-           	    tbar: [{
+        items: [{
+             	 xtype: 'panel',
+                 region: 'center',
+                 layout: 'anchor',
+                 defaults: {
+                	 anchor: '100% 100%'
+             	},
+                 items: [{
+                	 	xtype: 'tabpanel',
+                	    activeTab: 0,
+                	    layout:'anchor',
+                	    anchor: '100% 100%',
+	 		            defaults:{
+	 		                bodyPadding: 10,
+	 		            },
+	 		            bodyBorder:false,
+	 		            border: 0,
+                	    items: [{
+	 	               	    id:'treepanel',
+	 	              		title: '机构管理',	     	         	
+	 	     	         	xtype: 'treepanel',
+	 	     	    		useArrows : true,
+	 	     	    		rootVisible: false,
+	 	     	    		store: treeStore,
+	 	     	    		//height: '100%',
+	 	     	    		anchor:'100% 100%',
+	 	     	    		columns: [{
+      	             				xtype: 'treecolumn', 
+      	             		        text: '名称',
+      	             		        dataIndex: 'name',
+      	             		        width: 300
+      	             		    },
+      	             		   {
+      	             			    text: '编码',
+      	             			    dataIndex: 'code',
+      	             			    width: 200
+      	             			},
+      	             		    {
+      	             		        text: '分类',
+      	             		        dataIndex: 'category',
+      	             		        hidden: false,
+      	             		        width: 150
+      	             		    },
+      	             		    {
+      	             		        text: '叶节点',
+      	             		        dataIndex: 'leaf',
+      	             		        width: 150
+      	             		    },
+      	             		    {
+      	             		        text: '上级组织',
+      	             		        dataIndex: 'parentName',
+      	             		        //flex: 1
+      	             		      	width: 150
+      	             		    }
+      	                 	],
+ 	     	           		listeners: {
+ 	     	           	    itemclick: function(view,record,item,index,e) {	           		   
+ 	     	           		    var proxy = store.getProxy();
+ 	     	           	        proxy.setExtraParam("parentId", record.raw.id);
+ 	     	           	        store.loadPage(1);
+ 	     	           	    }
+ 	     	           	}
+                	    }, {
+	                     	id:'gridpanel',
+	                     	title: '机构图',
+	         	            region: 'center',
+	         	            xtype: 'gridpanel',
+	         	            store: store,
+	         	            columns: [
+                    			{
+                    			    text: '编号',
+                    			    dataIndex: 'code',
+                    			    width: 100
+                    			},
+                    		    {
+                    		        text: '名称',
+                    		        dataIndex: 'name',
+                    		        width: 150
+                    		    },
+                    		    {
+                    		        text: '地址',
+                    		        dataIndex: 'url',
+                    		        hidden: false,
+                    		        width: 150
+                    		    },
+                    		    {
+                    		        text: '排序',
+                    		        dataIndex: 'sortOrder',
+                    		        width: 150
+                    		    },
+                    		    {
+                    		        text: '上级菜单',
+                    		        dataIndex: 'parentName',
+                    		        //flex: 1
+                    		     	width: 150
+	                    	 }],           		
+	                         dockedItems: [{
+	                         	id: 'pagingtoolbar',
+	                    	        xtype: 'pagingtoolbar',
+	                    	        store: store,
+	                    	        dock: 'bottom',
+	                    	        displayInfo: true
+	                    	 }]
+                     }]	                	
+                 }],
+                 tbar: [{
            	    	xtype:'buttongroup',
-                       items: [{text: '添加',
-           	        iconCls: 'addIcon',
-           	     handler: showAdd
-           	    }]},{
-           	    	xtype:'buttongroup',
-                       items: [{text: '删除',
-           	        iconCls: 'deleteIcon'
-           	    }]},{
-           	    	xtype:'buttongroup',
-                       items: [{text: '修改',
-           	        iconCls: 'editIcon'
-           	    }]}],
-	           	listeners: {
-	           	    itemclick: function(view,record,item,index,e) {	           		   
-	           		    var proxy = store.getProxy();
-	           	        proxy.setExtraParam("parentId", record.raw.id);
-	           	        store.loadPage(1);
-	           	    }
-	           	}
-            },
-            {
-            	id:'gridpanel',
-            	title: '下级机构',
-	            region: 'center',
-	            xtype: 'gridpanel',
-	            store: store,
-	            columns: [
-           			{
-           			    text: '编号',
-           			    dataIndex: 'code',
-           			    width: 100
-           			},
-           		    {
-           		        text: '名称',
-           		        dataIndex: 'name',
-           		        width: 150
-           		    },
-           		    {
-           		        text: '地址',
-           		        dataIndex: 'url',
-           		        hidden: false,
-           		        width: 150
-           		    },
-           		    {
-           		        text: '排序',
-           		        dataIndex: 'sortOrder',
-           		        width: 150
-           		    },
-           		    {
-           		        text: '上级菜单',
-           		        dataIndex: 'parentName',
-           		        flex: 1
-           		    }
-               	],           		
-                dockedItems: [{
-                	id: 'pagingtoolbar',
-           	        xtype: 'pagingtoolbar',
-           	        store: store,
-           	        dock: 'bottom',
-           	        displayInfo: true
-           	    }]
-            }
-        ]
+                    items: [{text: '刷新',
+        	        iconCls: 'addIcon',
+        	     handler: showAdd
+        	    }]},'-',{
+          	    	xtype:'buttongroup',
+                      items: [{text: '添加',
+          	        iconCls: 'addIcon',
+          	     handler: showAdd
+          	    }]},{
+          	    	xtype:'buttongroup',
+                    items: [{text: '修改',
+        	        iconCls: 'editIcon'
+        	    }]},{
+          	    	xtype:'buttongroup',
+                      items: [{text: '删除',
+          	        iconCls: 'deleteIcon'
+          	    }]}]
+        }]
     });
 	/*
 	Ext.getCmp('treepanel').on('itemclick', function(view,record,item,index,e) {
@@ -326,5 +393,7 @@ Ext.onReady(function () {
 </script>
 </head>
 <body>
+<div id="form">  
+</div>
 </body>
 </html>

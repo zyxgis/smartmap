@@ -24,7 +24,7 @@ import com.smartmap.systemManage.model.Operate;
 @RequestMapping("/operate")
 public class OperateController {
 	
-	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+	private static final Logger logger = LoggerFactory.getLogger(OperateController.class);
 
 	
 	@Autowired

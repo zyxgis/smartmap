@@ -1,7 +1,6 @@
 package com.smartmap.systemManage.model;
 
 import java.io.Serializable;
-
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -11,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 /**
  * 用户
@@ -48,6 +48,13 @@ public class User implements Serializable {
     @Column(length=20)
     private String mobileNumber;
     
+    /**组织*/
+    @Column
+    private Long organizationId;
+    
+    @Transient
+    private String organizationName;
+        
     /**
      * 创建日期
      */
@@ -150,6 +157,22 @@ public class User implements Serializable {
 		this.lastUpdate = lastUpdate;
 	}
     
+	public Long getOrganizationId() {
+		return organizationId;
+	}
+
+	public void setOrganizationId(Long organizationId) {
+		this.organizationId = organizationId;
+	}
+
+	public String getOrganizationName() {
+		return organizationName;
+	}
+
+	public void setOrganizationName(String organizationName) {
+		this.organizationName = organizationName;
+	}
+
 	public User() {
 		super();
 	}

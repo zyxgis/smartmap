@@ -31,92 +31,31 @@ Ext.QuickTips.init();
 var basePagePath='<%=basePath%>';
 var baseDataPath='<%=basePath%>/spring';
 //
+var itemsPerPage = 10;
 Ext.onReady(function () {
-var formPanel = new Ext.FormPanel({
-	title: '用户管理',
-    renderTo: "form",    
-    autoHeight : true,    
-    layout : "form",
-    fieldDefaults: {
-    	labelWidth : 65,
-        labelAlign: 'right'
-    },
-    frame:true,
-    border:false,
-    bodyBorder:false,
-    items: [{ // 行1
-    	xtype: 'fieldcontainer',
-    	border:false,
-        bodyBorder:false,
-    	frame:true,
-        layout : "column", // 从左往右的布局
-        items : [{
-           xtype: 'fieldcontainer',
-           columnWidth : .5, // 该列有整行中所占百分比           
-           layout : "form", // 从上往下的布局      
-           frame:true,
-           border:false,
-           bodyBorder:false,
-           items : [{
-              xtype : "textfield",              
-              fieldLabel: '角色名',
-              name: 'roleName',
-              emptyText: '请输入',
-              width : 120
-             }]
-          }, {
-           xtype: 'fieldcontainer',
-           columnWidth : .5,
-           layout : "form",
-           border:false,
-           bodyBorder:false,
-           items : [{        	  
-              xtype : "textfield",
-              fieldLabel: '登录名',
-              name: 'username',
-              emptyText: '请输入',
-              width : 120
-             }]
-          }]
-       }],
-         buttons: [{
-            text: '查询',
-            scope: this,
-            handler: function() {               
-               var form = formPanel.getForm();
-               var roleName = form.findField('roleName').getValue(); 
-               //gridPanel.store.currentPage=1;
-               var proxy = gridPanel.store.getProxy();
-               if(roleName!="")
-            	{
-            	   proxy.setExtraParam("roleName", roleName);
-            	}               
-               gridPanel.store.loadPage(1);
-           }
-        },{
-            text: '清除',
-            scope: this,
-            handler: function() {
-               formPanel.getForm().reset();               
-           }
-        }]
-	});
+	var treeStore = new Ext.data.TreeStore({
+	    //autoLoad: false,
+        proxy: {
+            type: 'ajax',
+            url: baseDataPath+'/organization/queryToTreeWithLevel',
+            extraParams: {maxLevel:1},
+        },
+        root: {
+            text: 'root',
+            id: 'root',
+            expanded: false
+        }
+    });
 	//
-	function showUrl(value) 
-	{ 
-		return "<a href='http://"+value+"' target='_blank'>"+value+"</a>"; 
-	} 
-		
-	var itemsPerPage = 10;
-	var store = Ext.create('Ext.data.Store', {
-	    id:'store',
+	var store = new Ext.data.Store({
+		id:'store',
 	    autoLoad: false,
 	    fields:['id', 'code', 'name', 'superRole', 'description'],
 	    remoteSort: true,
 	    pageSize: itemsPerPage,
 	    proxy: {
 	        type: 'ajax',
-	        url: baseDataPath+'/role/queryRolesByRoleName',
+	        url: baseDataPath+'/role/queryByOrganizationId',
 	        extraParams: {userId:""},
 	        reader: {
 	            type: 'json',
@@ -124,74 +63,101 @@ var formPanel = new Ext.FormPanel({
 	            totalProperty: 'totalCount'
 	        }
 	    }
-	});
-	//
-    var gridPanel = new Ext.grid.Panel({
-        //title: '用户信息',
-        columns: [
-		    {
-		        text: '编号',
-		        dataIndex: 'code',
-		        width: 150
-		    },
-		    {
-		        text: '角色名',
-		        dataIndex: 'name',
-		        hidden: false,
-		        width: 150
-		    },
-		    {
-		        text: '超级角色',
-		        dataIndex: 'superRole',
-		        width: 150
-		    },
-		    {
-		        text: '描述',
-		        dataIndex: 'description',		        
-		        renderer:showUrl,
-		        flex: 1
-		    }
-    	],
-		store: store,
-        renderTo: 'grid',
-        dockedItems: [{
-	        xtype: 'pagingtoolbar',
-	        store: store,
-	        dock: 'bottom',
-	        displayInfo: true
-	    }],
-	    tbar: [{
-	    	xtype:'buttongroup',
-            items: [{text: '添加',
-	        iconCls: 'addIcon'
-	    }]},{
-	    	xtype:'buttongroup',
-            items: [{text: '删除',
-	        iconCls: 'deleteIcon'
-	    }]},{
-	    	xtype:'buttongroup',
-            items: [{text: '修改',
-	        iconCls: 'editIcon'
-	    }]}]
-    });
+	});	
 	//
 	var viewport = new Ext.Viewport({
         layout: {
-            type: 'vbox',
-            padding: '0',
-            align: 'stretch'
+            type: 'border',
+            padding: '0'
         },
-        defaults: { margins: '0 0 0 0' },
-        items: [formPanel, gridPanel]
+        defaults: { margins: '0 0 0 0' },        
+        items: [
+         	{
+         		id:'treepanel',
+         		title: '组织机构',
+	         	region: 'west',
+	         	xtype: 'treepanel',
+	         	split: true,
+	         	width: 300,
+			    minWidth: -20,
+			    maxWidth: 300,
+			    collapsible: true,
+			    animCollapse: false,
+			    collapseMode:'mini',
+	    		useArrows : true,
+	    		rootVisible: false,
+	    		store: treeStore,	    		
+	           	listeners: {
+	           	    itemclick: function(view,record,item,index,e) {	           		   
+	           		    var proxy = store.getProxy();
+	           	        proxy.setExtraParam("organizationId", record.raw.id);
+	           	        store.loadPage(1);
+	           	    }
+	           	}
+            },
+            {
+                region: 'center', 
+                title: '组织机构',
+                xtype: 'gridpanel',
+                store: store,
+                columns: [
+              		    {
+              		        text: '编号',
+              		        dataIndex: 'code',
+              		        width: 150
+              		    },
+              		    {
+              		        text: '角色名',
+              		        dataIndex: 'name',
+              		        hidden: false,
+              		        width: 150
+              		    },
+              		    {
+              		        text: '超级角色',
+              		        dataIndex: 'superRole',
+              		        width: 150
+              		    },
+              		    {
+              		        text: '描述',
+              		        dataIndex: 'description',		        
+              		        //renderer:showUrl,
+              		        flex: 1
+              		    }
+                  	],              		
+                 dockedItems: [{
+           	        xtype: 'pagingtoolbar',
+           	        store: store,
+           	        dock: 'bottom',
+           	        displayInfo: true
+           	    }],
+	           	tbar: [{
+	     	    	xtype:'buttongroup',
+	                 items: [{text: '刷新',
+	     	        iconCls: 'findIcon'
+	     	    }]},'-',{
+	     	    	xtype:'buttongroup',
+	                 items: [{text: '添加',
+	     	        iconCls: 'addIcon'
+	     	    }]},{
+	     	    	xtype:'buttongroup',
+	                 items: [{text: '删除',
+	     	        iconCls: 'deleteIcon'
+	     	    }]},{
+	     	    	xtype:'buttongroup',
+	                 items: [{text: '修改',
+	     	        iconCls: 'editIcon'
+	     	    }]}]
+            }
+        ]
     });
-    store.loadPage(1);
+	
+	
+	
+	
+	
 });
 </script>
 </head>
 <body>
-	<div id="form">  
-	</div>
-	<div id="grid">        
-	</div>
 </body>
 </html>

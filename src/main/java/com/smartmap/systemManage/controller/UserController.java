@@ -3,6 +3,7 @@ package com.smartmap.systemManage.controller;
 import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -24,8 +25,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.smartmap.systemManage.controller.util.OrganizationUtil;
+import com.smartmap.systemManage.dao.OrganizationDao;
 import com.smartmap.systemManage.dao.RoleDao;
 import com.smartmap.systemManage.dao.UserDao;
+import com.smartmap.systemManage.model.Employee;
+import com.smartmap.systemManage.model.Organization;
 import com.smartmap.systemManage.model.Role;
 import com.smartmap.systemManage.model.User;
 
@@ -37,6 +42,8 @@ public class UserController {
 	@Autowired
 	private UserDao userDao;
 	
+	@Autowired
+	private OrganizationDao organizationDao;
 	/**
 	 * 
 	 * @param pageNo
@@ -166,7 +173,8 @@ public class UserController {
 	
 	@RequestMapping(method=RequestMethod.GET,value="grandUserRoles",produces="text/plain;charset=UTF-8")
     @ResponseBody  
-	public int grandUserRoles(@RequestParam(value="userId",required=false) Long userId, @RequestParam(value="roleIdArray",required=false) Long[] roleIdArray) {
+	public int grandUserRoles(@RequestParam(value="userId",required=false) Long userId, 
+			@RequestParam(value="roleIdArray",required=false) Long[] roleIdArray) {
 		//
 		logger.info("userId="+userId.toString());
 		logger.info("roleIdArray="+roleIdArray.toString());
@@ -177,4 +185,57 @@ public class UserController {
 		logger.info("countGrand="+countGrand);
 		return countRevoke+countGrand;		
 	}
+	
+	
+	/**
+	 * 
+	 * @param pageNo
+	 * @param countPerPage
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	@RequestMapping(method=RequestMethod.GET,value="queryByOrganizationId",produces="text/plain;charset=UTF-8")
+    @ResponseBody  
+    public String queryByOrganizationId(
+    		@RequestParam(value="organizationId",required=false) Long organizationId)
+    				throws UnsupportedEncodingException{
+		//
+		logger.info("limit="+organizationId);
+		//		
+  		String resultJson="";  		
+  		List<Organization> organizationAllList = organizationDao.getAllOrganizations();
+  		List<Organization> organizationList = organizationAllList;
+  		if(organizationId != null)
+  		{
+	  		List<Organization> organizationRootList = new LinkedList<Organization>();
+	  		OrganizationUtil.listToTree(organizationAllList, organizationRootList);
+	  		organizationList = OrganizationUtil.downTrace(organizationRootList, organizationId);
+  		}
+  		List<Long> organizationIdList = new LinkedList<Long>();
+  		for(int i=0; i<organizationList.size(); i++)
+  		{
+  			organizationIdList.add(organizationList.get(i).getId());
+  		}
+  		List<User> userList = userDao.getByOrganizationIds(organizationIdList);
+  		Iterator<User> iteratorUser = userList.iterator();  		
+  		//
+  		JSONArray jsonArray = new JSONArray();
+  		JSONObject jsonObject = null;
+  		while (iteratorUser.hasNext()) {
+  			User user = iteratorUser.next();
+  			jsonObject = new JSONObject();
+  			jsonObject.put("id", user.getId());
+	  	  	jsonObject.put("loginUsername", user.getLoginUsername());
+	  		jsonObject.put("loginPassword", user.getLoginPassword());
+	  		jsonObject.put("text", user.getLoginUsername());
+	  		jsonObject.put("text", user.getLoginUsername());
+	  		jsonObject.put("leaf", true); 
+  	  		jsonArray.add(jsonObject);
+  		}
+  		//
+  		resultJson = jsonArray.toString();
+  		logger.info(resultJson);
+  		return resultJson;
+    }
+	
 }

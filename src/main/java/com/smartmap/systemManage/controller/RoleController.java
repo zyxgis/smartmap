@@ -60,7 +60,7 @@ public class RoleController {
   			jsonObject = new JSONObject();
   	  		jsonObject.put("id", role.getId());
   	  		jsonObject.put("code", role.getCode());
-  	  		jsonObject.put("roleName", role.getRoleName());
+  	  		jsonObject.put("name", role.getRoleName());
   	  		jsonObject.put("description", role.getDescription());  	  		
   	  		jsonArray.add(jsonObject);
   		}
@@ -106,7 +106,7 @@ public class RoleController {
   			jsonObject = new JSONObject();
   	  		jsonObject.put("id", role.getId());
   	  		jsonObject.put("code", role.getCode());
-  	  		jsonObject.put("roleName", role.getRoleName());
+  	  		jsonObject.put("name", role.getRoleName());
   	  		jsonObject.put("description", role.getDescription());  	  		
   	  		jsonArray.add(jsonObject);
   		}
@@ -150,7 +150,7 @@ public class RoleController {
   			jsonObject = new JSONObject();
   	  		jsonObject.put("id", role.getId());
   	  		jsonObject.put("code", role.getCode());
-  	  		jsonObject.put("roleName", role.getRoleName());
+  	  		jsonObject.put("name", role.getRoleName());
   	  		jsonObject.put("description", role.getDescription());  	  		
   	  		jsonArray.add(jsonObject);
   		}
@@ -161,5 +161,46 @@ public class RoleController {
   		return resultJson;
     }
 	//
-	
+	/**
+	 * 
+	 * @param pageNo
+	 * @param countPerPage
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	@RequestMapping(method=RequestMethod.GET,value="queryByOrganizationId",produces="text/plain;charset=UTF-8")
+    @ResponseBody  
+    public String queryByOrganizationId(
+    		@RequestParam(value="page",required=false) Integer pageNo,    		
+    		@RequestParam(value="limit",required=false) Integer countPerPage,
+    		@RequestParam(value="organizationId",required=false) Long organizationId)
+    				throws UnsupportedEncodingException{
+		//
+		logger.info("page="+pageNo.toString());
+		logger.info("limit="+countPerPage.toString());
+		logger.info("limit="+organizationId);
+		//	
+  		String resultJson="";
+  		List<Role> roleList = roleDao.getByOrganizationId(organizationId);
+  		Iterator<Role> iteratorRole = roleList.iterator();
+  		JSONObject jsonObjectResult = new JSONObject();
+  		jsonObjectResult.put("totalCount", 15);
+  		//  		
+  		JSONArray jsonArray = new JSONArray();
+  		JSONObject jsonObject = null;
+  		while (iteratorRole.hasNext()) {
+  			Role role = iteratorRole.next();
+  			jsonObject = new JSONObject();
+  	  		jsonObject.put("id", role.getId());
+  	  		jsonObject.put("code", role.getCode());
+  	  		jsonObject.put("name", role.getRoleName());
+  	  		jsonObject.put("description", role.getDescription());  	  		
+  	  		jsonArray.add(jsonObject);
+  		}
+  		jsonObjectResult.put("data", jsonArray);
+  		//
+  		resultJson = jsonArray.toString();
+  		logger.info(resultJson);
+  		return resultJson;
+	}
 }
