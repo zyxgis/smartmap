@@ -169,22 +169,16 @@ public class RoleController {
 	 * @throws UnsupportedEncodingException
 	 */
 	@RequestMapping(method=RequestMethod.GET,value="queryByOrganizationId",produces="text/plain;charset=UTF-8")
-    @ResponseBody  
+    @ResponseBody 
     public String queryByOrganizationId(
-    		@RequestParam(value="page",required=false) Integer pageNo,    		
-    		@RequestParam(value="limit",required=false) Integer countPerPage,
     		@RequestParam(value="organizationId",required=false) Long organizationId)
     				throws UnsupportedEncodingException{
 		//
-		logger.info("page="+pageNo.toString());
-		logger.info("limit="+countPerPage.toString());
 		logger.info("limit="+organizationId);
 		//	
   		String resultJson="";
   		List<Role> roleList = roleDao.getByOrganizationId(organizationId);
-  		Iterator<Role> iteratorRole = roleList.iterator();
-  		JSONObject jsonObjectResult = new JSONObject();
-  		jsonObjectResult.put("totalCount", 15);
+  		Iterator<Role> iteratorRole = roleList.iterator();  		
   		//  		
   		JSONArray jsonArray = new JSONArray();
   		JSONObject jsonObject = null;
@@ -194,10 +188,10 @@ public class RoleController {
   	  		jsonObject.put("id", role.getId());
   	  		jsonObject.put("code", role.getCode());
   	  		jsonObject.put("name", role.getRoleName());
-  	  		jsonObject.put("description", role.getDescription());  	  		
+  	  		jsonObject.put("text", role.getRoleName());
+  	  		jsonObject.put("leaf", true); 
   	  		jsonArray.add(jsonObject);
   		}
-  		jsonObjectResult.put("data", jsonArray);
   		//
   		resultJson = jsonArray.toString();
   		logger.info(resultJson);

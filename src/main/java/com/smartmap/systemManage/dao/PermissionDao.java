@@ -27,9 +27,8 @@ public class PermissionDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<Resource> getResourceByRoleId(Integer pageNo, Integer countPerPage, Long roleId) {
-		String baseJQL = "SELECT DISTINCT a FROM SysResource a INNER JOIN SysPermission b ON a.id = b.resourceID WHERE b.roleID = :roleId";
-		baseJQL += " ORDER BY a.parentId, a.sortOrder";
-		
+		String baseJQL = "SELECT DISTINCT a.id, a.code, a.createTime, a.description, a.icon, a.lastUpdate, b.operateCodes, a.options, a.parentId, a.resourceName, a.sortOrder, a.target, a.url FROM SysResource a INNER JOIN SysPermission b ON a.id = b.resourceID WHERE b.roleID = :roleId";
+		baseJQL += " ORDER BY a.parentId, a.sortOrder";		
 		Query query = entityManager.createNativeQuery(baseJQL, Resource.class);
 		//
 		if(roleId != null)
@@ -43,7 +42,7 @@ public class PermissionDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<Resource> getResourceByUserId(Integer pageNo, Integer countPerPage, Long userId) {
-		String baseJQL = "SELECT DISTINCT * FROM SysResource a INNER JOIN SysPermission b ON a.id = b.resourceID  INNER JOIN SysUserRole c ON b.roleID=c.roleID WHERE c.userID = :userId";
+		String baseJQL = "SELECT DISTINCT a.id, a.code, a.createTime, a.description, a.icon, a.lastUpdate, b.operateCodes, a.options, a.parentId, a.resourceName, a.sortOrder, a.target, a.url FROM SysResource a INNER JOIN SysPermission b ON a.id = b.resourceID  INNER JOIN SysUserRole c ON b.roleID=c.roleID WHERE c.userID = :userId";
 		baseJQL += " ORDER BY a.parentId, a.sortOrder, a.id";
 		Query query = entityManager.createNativeQuery(baseJQL, Resource.class);
 		//

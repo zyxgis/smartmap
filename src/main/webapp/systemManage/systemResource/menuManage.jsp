@@ -34,7 +34,7 @@ var baseDataPath='<%=basePath%>/spring';
 var itemsPerPage = 10;
 //
 Ext.onReady(function () {
-	var treeStoreModule = new Ext.data.TreeStore({
+	var treeStore = new Ext.data.TreeStore({
 	    //autoLoad: false,
         proxy: {
             type: 'ajax',
@@ -46,7 +46,22 @@ Ext.onReady(function () {
             expanded: false
         }
     });		
-	
+	//
+	var store = new Ext.data.Store({
+	    autoLoad: false,
+	    fields:['id', 'code', 'name', 'url', 'sortOrder', 'parentName'],
+	    remoteSort: true,
+	    pageSize: itemsPerPage,
+	    proxy: {
+	        type: 'ajax',
+	        url: baseDataPath+'/resource/queryResourcesByParentId',
+	        reader: {
+	            type: 'json',
+	            root: 'data',
+	            totalProperty: 'totalCount'
+	        }
+	    }
+	});	
 	//
 	var viewport = new Ext.Viewport({
         layout: {
@@ -54,50 +69,86 @@ Ext.onReady(function () {
             padding: '0'
         },
         defaults: { margins: '0 0 0 0' },        
-        items: [{
-        		region: 'center',
-        	    id:'treepanel',
-           		title: '机构管理',	     	         	
-  	         	xtype: 'treepanel',
-  	    		useArrows : true,
-  	    		rootVisible: false,
-  	    		store: treeStoreModule,
-  	    		anchor:'100% 100%',
-  	    		columns: [{
-           				xtype: 'treecolumn', 
-           		        text: '名称',
-           		        dataIndex: 'name',
-           		        width: 300
-           		    },
-           		   {
-           			    text: '编码',
+        items: [
+         	{
+         		id:'treepanel',
+         		title: '功能模块',
+	         	region: 'west',
+	         	xtype: 'treepanel',
+	         	split: true,
+	         	width: 300,
+			    minWidth: -20,
+			    maxWidth: 300,
+			    collapsible: true,
+			    animCollapse: false,
+			    collapseMode:'mini',
+	    		useArrows : true,
+	    		rootVisible: false,
+	    		store: treeStore,
+           	    tbar: [{
+           	    	xtype:'buttongroup',
+                       items: [{text: '添加',
+           	        iconCls: 'addIcon',
+           	     handler: showAdd
+           	    }]},{
+           	    	xtype:'buttongroup',
+                       items: [{text: '删除',
+           	        iconCls: 'deleteIcon'
+           	    }]},{
+           	    	xtype:'buttongroup',
+                       items: [{text: '修改',
+           	        iconCls: 'editIcon'
+           	    }]}],
+	           	listeners: {
+	           	    itemclick: function(view,record,item,index,e) {	           		   
+	           		    var proxy = store.getProxy();
+	           	        proxy.setExtraParam("parentId", record.raw.id);
+	           	        store.loadPage(1);
+	           	    }
+	           	}
+            },
+            {
+            	id:'gridpanel',
+            	title: '下级功能模块',
+	            region: 'center',
+	            xtype: 'gridpanel',
+	            store: store,
+	            columns: [
+           			{
+           			    text: '编号',
            			    dataIndex: 'code',
-           			    width: 200
+           			    width: 100
            			},
            		    {
-           		        text: '分类',
-           		        dataIndex: 'category',
+           		        text: '名称',
+           		        dataIndex: 'name',
+           		        width: 150
+           		    },
+           		    {
+           		        text: '地址',
+           		        dataIndex: 'url',
            		        hidden: false,
            		        width: 150
            		    },
            		    {
-           		        text: '叶节点',
-           		        dataIndex: 'leaf',
+           		        text: '排序',
+           		        dataIndex: 'sortOrder',
            		        width: 150
            		    },
            		    {
-           		        text: '上级组织',
+           		        text: '上级菜单',
            		        dataIndex: 'parentName',
-           		        //flex: 1
-           		      	width: 150
+           		        flex: 1
            		    }
-               	],
-           		listeners: {
- 	           	    itemclick: function(view,record,item,index,e) {	           		   
- 	           		    
- 	           	    }
-           		}
-    	    }
+               	],           		
+                dockedItems: [{
+                	id: 'pagingtoolbar',
+           	        xtype: 'pagingtoolbar',
+           	        store: store,
+           	        dock: 'bottom',
+           	        displayInfo: true
+           	    }]
+            }
         ]
     });
 	/*

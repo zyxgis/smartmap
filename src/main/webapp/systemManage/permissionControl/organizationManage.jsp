@@ -148,12 +148,12 @@ Ext.onReady(function () {
       	             		    }
       	                 	],
  	     	           		listeners: {
- 	     	           	    itemclick: function(view,record,item,index,e) {	           		   
- 	     	           		    var proxy = store.getProxy();
- 	     	           	        proxy.setExtraParam("parentId", record.raw.id);
- 	     	           	        store.loadPage(1);
- 	     	           	    }
- 	     	           	}
+	 	     	           	    itemclick: function(view,record,item,index,e) {	           		   
+	 	     	           		    var proxy = store.getProxy();
+	 	     	           	        proxy.setExtraParam("parentId", record.raw.id);
+	 	     	           	        store.loadPage(1);
+	 	     	           	    }
+ 	     	           		}
                 	    }, {
 	                     	id:'gridpanel',
 	                     	title: '机构图',
@@ -218,15 +218,7 @@ Ext.onReady(function () {
           	    }]}]
         }]
     });
-	/*
-	Ext.getCmp('treepanel').on('itemclick', function(view,record,item,index,e) {
-	    //Ext.Msg.alert('信息提示', Ext.JSON.encode(record.raw));
-	    //alert(Ext.JSON.encode(record.raw));
-	    var proxy = store.getProxy();
-        proxy.setExtraParam("parentId", record.raw.id);
-        store.loadPage(1);
-	});
-	*/
+	
 	function showAdd() {
 		var addWindow = new Ext.Window({
 			title: '添加菜单',

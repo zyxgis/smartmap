@@ -32,6 +32,7 @@ Ext.QuickTips.init();
 var basePagePath='<%=basePath%>';
 var baseDataPath='<%=basePath%>/spring';
 var itemsPerPage = 10;
+var selectedUser;
 //
 Ext.onReady(function () {
 	var treeStoreOrganization = new Ext.data.TreeStore({
@@ -43,38 +44,42 @@ Ext.onReady(function () {
         root: {
             text: 'root',
             id: 'root',
-            expanded: false
+            expanded: true
         }
     });
 	//
 	var treeStoreUser = new Ext.data.TreeStore({
-	    //autoLoad: false,
-        proxy: {
-            type: 'ajax',
-            url: baseDataPath+'/user/queryByOrganizationId'
-        },
         root: {
-            text: '所有用户',
+            text: '用户',
             id: 'root',
             expanded: false
         }
     });
 	//
-	var store = new Ext.data.Store({
-	    autoLoad: false,
-	    fields:['id', 'code', 'name', 'url', 'sortOrder', 'parentName'],
-	    remoteSort: true,
-	    pageSize: itemsPerPage,
-	    proxy: {
-	        type: 'ajax',
-	        url: baseDataPath+'/employee/queryByOrganizationId',
-	        reader: {
-	            type: 'json',
-	            root: 'data',
-	            totalProperty: 'totalCount'
-	        }
-	    }
-	});	
+	var treeStoreModule = new Ext.data.TreeStore({
+        root: {
+        	text: '模块',
+            id: 'root',
+            parentId: null,
+            leaf: false,            
+            expanded: false
+        },
+        fields: ['id','code','name','text','leaf','category','sortOrder','description']
+    });
+	//
+	//
+	var treeStoreUserModule = new Ext.data.TreeStore({	    
+        root: {
+        	text: '模块',
+            id: 'root',
+            expanded: true
+        }
+    });
+	//
+	function showYesNo(value) 
+	{ 
+		return ((value==true || value=='true')?'是':'否'); 
+	} 
 	//
 	var viewport = new Ext.Viewport({        
 		layout: {
@@ -86,11 +91,8 @@ Ext.onReady(function () {
                 {
                 	region:'west',
                 	layout: 'hbox',
-                	items:
-                	[
-						{
+                	items:[{
 							title: '组织机构',
-						 	//region: 'west',
 						 	xtype: 'treepanel',
 						 	width: 200,
 						 	height:'100%',
@@ -98,16 +100,21 @@ Ext.onReady(function () {
 							rootVisible: false,
 							store: treeStoreOrganization,
 						   	listeners: {
-						   	    itemclick: function(view,record,item,index,e) {	           		   
-						   		    var proxy = treeStoreUser.getProxy();
-						   	        proxy.setExtraParam("organizationId", record.raw.id);
-						   	     	treeStoreUser.load();
+						   	    itemclick: function(view,record,item,index,e) {						   	    	
+						   	    	treeStoreUser.setProxy({
+						   	            type: 'ajax',
+						   	            url: baseDataPath+'/user/queryByOrganizationId',
+						   	         	extraParams:{'organizationId': record.raw.id}
+						   	        });
+						   	    	treeStoreUser.reload();	
+						   	    	//
+	     	           	    		var permissionPanel = Ext.getCmp('permissionPanel');
+	     	           	    		permissionPanel.setTitle('用户授权-');
 						   	    }
 						   	}
 						},
 						{
 							title: '用户列表',
-						 	//region: 'center',
 						 	xtype: 'treepanel',
 						 	width: 200,
 						 	height:'100%',
@@ -115,41 +122,53 @@ Ext.onReady(function () {
 							rootVisible: false,
 							store: treeStoreUser,
 						   	listeners: {
-						   	    itemclick: function(view,record,item,index,e) {	           		   
-						   		    var proxy = store.getProxy();
-						   	        proxy.setExtraParam("organizationId", record.raw.id);
-						   	        store.loadPage(1);
+						   	    itemclick: function(view,record,item,index,e) {
+						   	    	treeStoreModule.setProxy({
+						   	            type: 'ajax',
+						   	            url: baseDataPath+'/permission/queryResourcesByUserId',
+						   	         	extraParams:{'userId': record.raw.id}
+						   	        });
+						   	    	treeStoreModule.reload();
+						   	    	selectedUser = record.raw;
+						   	    	var permissionTabpanel = Ext.getCmp('permissionTabpanel');
+						   	    	permissionTabpanel.setActiveTab(0);
+						   	    	var checkboxGroupOperatePanel = Ext.getCmp('checkboxGroupOperatePanel');
+	     	           	    		checkboxGroupOperatePanel.removeAll();
+	     	           	    		//
+	     	           	    		var permissionPanel = Ext.getCmp('permissionPanel');
+	     	           	    		permissionPanel.setTitle('用户授权-'+selectedUser.name);
 						   	    }
 						   	}
 						}
                 	]
                 },
             	{
-                //layout: 'vbox',
-                region: 'center',                
-                title: '用户授权',
+                	id:'permissionPanel',
+                	region: 'center',
+                	title: '用户授权',
                     layout: 'anchor',
                     defaults: {
-                   	 anchor: '100% 100%'
+                   	 	anchor: '100% 100%'
                 	},
                     items: [{
+                    	id:'permissionTabpanel',
                    	 	xtype: 'tabpanel',
                    	    activeTab: 0,
                    	    layout:'anchor',
                    	    anchor: '100% 100%',
    	 		            defaults:{
-   	 		                bodyPadding: 10,
+	   	 		            bodyBorder:false,
+	   	 		            border: 0,
+   	 		                bodyPadding: 0
    	 		            },
    	 		            bodyBorder:false,
    	 		            border: 0,
                    	    items: [{
-   	 	               	    id:'treepanel',
    	 	              		title: '模块权限',
    	 	     	         	xtype: 'treepanel',
    	 	     	    		useArrows : true,
    	 	     	    		rootVisible: false,
-   	 	     	    		//store: treeStore,
-   	 	     	    		//height: '100%',
+   	 	     	    		store: treeStoreModule,
    	 	     	    		anchor:'100% 100%',
    	 	     	    		columns: [{
          	             				xtype: 'treecolumn', 
@@ -160,112 +179,114 @@ Ext.onReady(function () {
          	             		   {
          	             			    text: '编码',
          	             			    dataIndex: 'code',
-         	             			    width: 200
+         	             			    width: 150
          	             			},
          	             		    {
          	             		        text: '分类',
          	             		        dataIndex: 'category',
-         	             		        hidden: false,
          	             		        width: 150
+         	             		    },
+         	             		  	{
+         	             		        text: '排序',
+         	             		        dataIndex: 'sortOrder',         	             		        
+         	             		        width: 50
          	             		    },
          	             		    {
          	             		        text: '叶节点',
          	             		        dataIndex: 'leaf',
-         	             		        width: 150
+         	             		        width: 50,
+         	             		      	renderer:showYesNo
          	             		    },
-         	             		    {
-         	             		        text: '上级组织',
-         	             		        dataIndex: 'parentName',
-         	             		        //flex: 1
-         	             		      	width: 150
-         	             		    }
+	       	             		    {
+	       	             		        text: '说明',
+	       	             		        dataIndex: 'description',
+	       	             		        width: 250
+	       	             		    }
          	                 	],
     	     	           		listeners: {
-    	     	           	    itemclick: function(view,record,item,index,e) {	           		   
-    	     	           		    var proxy = store.getProxy();
-    	     	           	        proxy.setExtraParam("parentId", record.raw.id);
-    	     	           	        store.loadPage(1);
-    	     	           	    }
+    	     	           	    	itemclick: function(view,record,item,index,e) {	           		   
+    	     	           		    
+    	     	           	    	}
     	     	           	},
     	                    tbar: [{
     	              	    	xtype:'buttongroup',
-    	                       items: [{text: '刷新',
-    	           	        iconCls: 'addIcon',
-	    	           	     handler: showAdd
+    	                       	items: [{text: '刷新',
+    	           	        	iconCls: 'addIcon',
+	    	           	     	handler: showAdd
 	    	           	    }]},'-',{
 	    	             	    	xtype:'buttongroup',
-	    	                         items: [{text: '添加',
+	    	                        items: [{text: '重置',
 	    	             	        iconCls: 'addIcon',
-	    	             	     handler: showAdd
+	    	             	     	handler: showAdd
 	    	             	    }]},{
 	    	             	    	xtype:'buttongroup',
-	    	                       items: [{text: '修改',
-	    	           	        iconCls: 'editIcon'
-	    	           	    }]},{
-	    	             	    	xtype:'buttongroup',
-	    	                         items: [{text: '删除',
-	    	             	        iconCls: 'deleteIcon'
-	    	             	    }]}]
-                   	    }, {
-   	                     	id:'gridpanel',
-   	                     	title: '功能权限',
-   	         	            region: 'center',
-   	         	            xtype: 'gridpanel',
-   	         	            store: store,
-   	         	            columns: [
-                       			{
-                       			    text: '编号',
-                       			    dataIndex: 'code',
-                       			    width: 100
-                       			},
-                       		    {
-                       		        text: '名称',
-                       		        dataIndex: 'name',
-                       		        width: 150
-                       		    },
-                       		    {
-                       		        text: '地址',
-                       		        dataIndex: 'url',
-                       		        hidden: false,
-                       		        width: 150
-                       		    },
-                       		    {
-                       		        text: '排序',
-                       		        dataIndex: 'sortOrder',
-                       		        width: 150
-                       		    },
-                       		    {
-                       		        text: '上级菜单',
-                       		        dataIndex: 'parentName',
-                       		        //flex: 1
-                       		     	width: 150
-   	                    	 }],           		
-   	                         dockedItems: [{
-   	                         	id: 'pagingtoolbar',
-   	                    	        xtype: 'pagingtoolbar',
-   	                    	        store: store,
-   	                    	        dock: 'bottom',
-   	                    	        displayInfo: true
-   	                    	 }],
-	   	                     tbar: [{
+	    	                       	items: [{text: '授权',
+	    	           	        	iconCls: 'editIcon'
+	    	           	    }]}]
+                   	    }, {     
+                   	    	title: '功能权限',
+                   	    	anchor:'100% 100%',
+                   	    	layout: 'hbox',                   	    	
+                            defaults: {           	 		            
+                           	 	anchor: '100% 100%'
+                           	 	//bodyPadding: 0,
+                        	},	
+                       	    items: [{
+	   	                     	title: '菜单',
+	   	         	            width:200,
+	   	         	            height:'100%',
+	   	         	            xtype: 'treepanel',
+		   	         	        useArrows : true,
+	   	 	     	    		rootVisible: false,
+	   	         	            store: treeStoreUserModule,
+		   	         	        listeners: {
+		     	           	    	itemclick: function(view,record,item,index,e) {
+		     	           	    		var items = record.raw.operate;
+		     	           	    	 	var checkboxGroupOperate = Ext.create('Ext.form.CheckboxGroup',{columns: 3,items:items, bodyPadding: 10});
+		     	           	    		var checkboxGroupOperatePanel = Ext.getCmp('checkboxGroupOperatePanel');
+		     	           	    		checkboxGroupOperatePanel.removeAll();
+		     	           	    		checkboxGroupOperatePanel.add(checkboxGroupOperate);
+		     	           	    		checkboxGroupOperatePanel.doLayout();
+		     	           	    	}
+		     	           		}
+                       	    },{
+	   	                     	title: '按钮',
+	   	         	            width: '100%',
+	   	         	            height:'100%',
+	   	         	            xtype: 'panel',
+	   	         	            id: 'checkboxGroupOperatePanel',
+		   	         	        layout:'anchor',
+		   	         	        anchor:'100% 100%',
+			   	         	    defaults: {
+	                           	 	anchor: '100% 100%'
+	                           	 	//bodyPadding: 0,
+	                        	}
+                       	    }],
+	   	                    tbar: [{
 	   	               	    	xtype:'buttongroup',
 	   	                        items: [{text: '刷新',
 	   	            	        iconCls: 'addIcon',
 	   	            	     handler: showAdd
 	   	            	    }]},'-',{
 	   	              	    	xtype:'buttongroup',
-	   	                          items: [{text: '添加',
+	   	                          items: [{text: '重置',
 	   	              	        iconCls: 'addIcon',
 	   	              	     handler: showAdd
 	   	              	    }]},{
 	   	              	    	xtype:'buttongroup',
-	   	                        items: [{text: '修改',
+	   	                        items: [{text: '授权',
 	   	            	        iconCls: 'editIcon'
-	   	            	    }]},{
-	   	              	    	xtype:'buttongroup',
-	   	                          items: [{text: '删除',
-	   	              	        iconCls: 'deleteIcon'
-	   	              	    }]}]
+	   	            	    }]}],
+		   	            	listeners: {
+		   	            		activate: function(tab, options) {		   	            			
+		   	            			treeStoreUserModule.setProxy({
+						   	            type: 'ajax',
+						   	            url: baseDataPath+'/permission/queryResourcesOfUserByUserId',
+						   	         	extraParams:{'userId': selectedUser.id}
+						   	        });
+		   	            			treeStoreUserModule.reload();
+		   	                  }
+		   	              }
                         }]	                	
                     }]
             }

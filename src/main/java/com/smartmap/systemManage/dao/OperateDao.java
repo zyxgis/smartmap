@@ -35,7 +35,7 @@ public class OperateDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<Operate> getAllOperates(Integer pageNo, Integer countPerPage) {
-		String baseJQL = "SELECT p FROM Operate p order by p.code desc";
+		String baseJQL = "SELECT p FROM Operate p order by p.code asc";
 		Query query = entityManager.createQuery(baseJQL);
 		if(pageNo != null && countPerPage != null)
 		{
@@ -46,7 +46,6 @@ public class OperateDao {
 		return operateList;
 	}
 	
-
 	@SuppressWarnings("unchecked")
 	public List<Operate> getRolesByRoleName(Integer pageNo, Integer countPerPage, String operateName) {
 		String baseJQL = "SELECT p FROM Operate p ";

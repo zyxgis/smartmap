@@ -225,9 +225,7 @@ public class UserController {
   			User user = iteratorUser.next();
   			jsonObject = new JSONObject();
   			jsonObject.put("id", user.getId());
-	  	  	jsonObject.put("loginUsername", user.getLoginUsername());
-	  		jsonObject.put("loginPassword", user.getLoginPassword());
-	  		jsonObject.put("text", user.getLoginUsername());
+	  	  	jsonObject.put("name", user.getLoginUsername());
 	  		jsonObject.put("text", user.getLoginUsername());
 	  		jsonObject.put("leaf", true); 
   	  		jsonArray.add(jsonObject);
