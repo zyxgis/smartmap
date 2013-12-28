@@ -47,7 +47,7 @@ public class OperateDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Operate> getRolesByRoleName(Integer pageNo, Integer countPerPage, String operateName) {
+	public List<Operate> getOperatesByOperateName(Integer pageNo, Integer countPerPage, String operateName) {
 		String baseJQL = "SELECT p FROM Operate p ";
 		if(operateName != null)
 		{

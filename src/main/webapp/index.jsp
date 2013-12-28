@@ -69,7 +69,7 @@ Ext.onReady(function () {
 	//点击菜单进行导航
 	function navigation(item, e)
 	{
-		var contentFrame = document.getElementById("contentFrame");
+		var contentFrame = document.getElementById("contentFrame");		
 		contentFrame.src = item.data.url;
 	}
 	

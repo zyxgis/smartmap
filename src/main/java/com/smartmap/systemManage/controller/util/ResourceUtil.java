@@ -21,10 +21,12 @@ public class ResourceUtil {
 	  	//jsonObject.put("leaf", resource.getChildren()==null?true:false);
 	  	jsonObject.put("leaf", resource.getChildren().size()==0?true:false); 
   		//jsonObject.put("leaf", false);
+	  	jsonObject.put("target", resource.getTarget());
   		jsonObject.put("url", resource.getUrl());
   		jsonObject.put("sortOrder", resource.getSortOrder());
-  		//jsonObject.put("parentName", resource.getParent()==null?"":resource.getParent().getName());
+  		jsonObject.put("parentName", resource.getParent()==null?"":resource.getParent().getResourceName());
   		jsonObject.put("description", resource.getDescription());
+  		jsonObject.put("expanded", true);
   		//
   		long operateCodes = resource.getOperateCodes();
 		OperateUtil.operateToJsonObject(operateCodes, operateList, jsonObject);

@@ -59,8 +59,8 @@ var formPanel = new Ext.FormPanel({
            bodyBorder:false,
            items : [{
               xtype : "textfield",              
-              fieldLabel: '操作名',
-              name: 'operateName',
+              fieldLabel: '编码',
+              name: 'code',
               emptyText: '请输入',
               width : 120
              }]
@@ -72,8 +72,8 @@ var formPanel = new Ext.FormPanel({
            bodyBorder:false,
            items : [{        	  
               xtype : "textfield",
-              fieldLabel: '登录名',
-              name: 'username',
+              fieldLabel: '操作名',
+              name: 'operateName',
               emptyText: '请输入',
               width : 120
              }]
@@ -84,13 +84,18 @@ var formPanel = new Ext.FormPanel({
             scope: this,
             handler: function() {               
                var form = formPanel.getForm();
+               var code = form.findField('code').getValue(); 
                var operateName = form.findField('operateName').getValue(); 
                //gridPanel.store.currentPage=1;
                var proxy = gridPanel.store.getProxy();
-               if(operateName!="")
+               if(code!="")
             	{
-            	   proxy.setExtraParam("operateName", operateName);
-            	}               
+            	   proxy.setExtraParam("code", code);
+            	}  
+               if(operateName!="")
+	           	{
+	           	   proxy.setExtraParam("operateName", operateName);
+	           	} 
                gridPanel.store.loadPage(1);
            }
         },{
@@ -136,7 +141,7 @@ var formPanel = new Ext.FormPanel({
 		    },
 		    {
 		        text: '操作名',
-		        dataIndex: 'name',
+		        dataIndex: 'operateName',
 		        hidden: false,
 		        width: 150
 		    },
@@ -166,18 +171,22 @@ var formPanel = new Ext.FormPanel({
 	        displayInfo: true
 	    }],
 	    tbar: [{
-	    	xtype:'buttongroup',
-            items: [{text: '添加',
+   	    	xtype:'buttongroup',
+            items: [{text: '刷新',
 	        iconCls: 'addIcon'
-	    }]},{
-	    	xtype:'buttongroup',
-            items: [{text: '删除',
-	        iconCls: 'deleteIcon'
-	    }]},{
-	    	xtype:'buttongroup',
+	    }]},'-',{
+  	    	xtype:'buttongroup',
+              items: [{text: '添加',
+  	        iconCls: 'addIcon'
+  	    }]},{
+  	    	xtype:'buttongroup',
             items: [{text: '修改',
 	        iconCls: 'editIcon'
-	    }]}]
+	    }]},{
+  	    	xtype:'buttongroup',
+            items: [{text: '删除',
+  	        iconCls: 'deleteIcon'
+  	    }]}]
     });
 	//
 	var viewport = new Ext.Viewport({

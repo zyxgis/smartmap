@@ -1,6 +1,7 @@
 package com.smartmap.systemManage.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class OperateController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(OperateController.class);
 
-	
+	private static final SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	@Autowired
 	private OperateDao operateDao;
 	
@@ -85,7 +86,7 @@ public class OperateController {
     public String queryOperatesByOperateName(
     		@RequestParam(value="page",required=false) Integer pageNo,    		
     		@RequestParam(value="limit",required=false) Integer countPerPage,
-    		@RequestParam(value="limit",required=false) String operateName)
+    		@RequestParam(value="operateName",required=false) String operateName)
     				throws UnsupportedEncodingException{
 		//
 		logger.info("page="+pageNo.toString());
@@ -93,7 +94,7 @@ public class OperateController {
 		logger.info("limit="+operateName);
 		//		
   		String resultJson="";  		
-  		List<Operate> operateList = operateDao.getRolesByRoleName(pageNo, countPerPage, operateName);
+  		List<Operate> operateList = operateDao.getOperatesByOperateName(pageNo, countPerPage, operateName);
   		Iterator<Operate> iteratorOperate = operateList.iterator();
   		JSONObject jsonObjectResult = new JSONObject();
   		jsonObjectResult.put("totalCount", 15);
@@ -106,8 +107,8 @@ public class OperateController {
   	  		jsonObject.put("id", operate.getId());
   	  		jsonObject.put("code", operate.getCode());
   	  		jsonObject.put("operateName", operate.getOperateName());
-  	  		jsonObject.put("createTime", operate.getCreateTime());
-  	  		jsonObject.put("lastUpdate", operate.getLastUpdate());
+  	  		jsonObject.put("createTime", simpleDateFormat.format(operate.getCreateTime()));
+  	  		jsonObject.put("lastUpdate", simpleDateFormat.format(operate.getLastUpdate()));
   	  		jsonObject.put("description", operate.getDescription());
   	  		jsonArray.add(jsonObject);
   		}

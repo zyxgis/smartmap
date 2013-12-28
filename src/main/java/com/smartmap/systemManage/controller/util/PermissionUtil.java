@@ -20,7 +20,8 @@ public class PermissionUtil {
   		jsonObject.put("code", resourceModule.getCode());
   		jsonObject.put("name", resourceModule.getResourceName());
   		jsonObject.put("text", resourceModule.getResourceName());
-  		jsonObject.put("sortOrder", resourceModule.getSortOrder());  	
+  		jsonObject.put("sortOrder", resourceModule.getSortOrder());  
+  		jsonObject.put("url", resourceModule.getUrl());
   		jsonObject.put("description", resourceModule.getDescription());
   		jsonObject.put("category", resourceModule.getParent()==null?"":resourceModule.getParent().getResourceName());  		
   		jsonObject.put("leaf", resourceModule.getChildren().size()==0?true:false); 

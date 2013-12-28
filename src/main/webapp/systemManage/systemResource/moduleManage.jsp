@@ -41,10 +41,33 @@ Ext.onReady(function () {
             url: baseDataPath+'/resource/queryAllResourcesToTree'
         },
         root: {
-            text: 'Ext JS',
-            id: 'src',
-            expanded: false
-        }
+        	id: 'root',
+            text: 'root',
+            parentId: null,
+            leaf: false,            
+            expanded: true
+        },
+        fields: [{
+            name: "id"
+        }, {
+            name: "code"
+        }, {
+            name: "name"
+        }, {
+            name: "text"
+        }, {
+            name: "leaf"
+        },  {
+            name: "target"
+        }, {
+            name: "url"
+        }, {
+            name: "sortOrder"
+        }, {
+            name: "parentName"
+        }, {
+            name: "description"
+        }]
     });		
 	
 	//
@@ -57,7 +80,7 @@ Ext.onReady(function () {
         items: [{
         		region: 'center',
         	    id:'treepanel',
-           		title: '机构管理',	     	         	
+           		title: '模块管理',	     	         	
   	         	xtype: 'treepanel',
   	    		useArrows : true,
   	    		rootVisible: false,
@@ -72,31 +95,62 @@ Ext.onReady(function () {
            		   {
            			    text: '编码',
            			    dataIndex: 'code',
-           			    width: 200
+           			    width: 100
            			},
-           		    {
-           		        text: '分类',
-           		        dataIndex: 'category',
-           		        hidden: false,
-           		        width: 150
-           		    },
-           		    {
-           		        text: '叶节点',
-           		        dataIndex: 'leaf',
-           		        width: 150
-           		    },
            		    {
            		        text: '上级组织',
            		        dataIndex: 'parentName',
            		        //flex: 1
            		      	width: 150
+           		    },
+           		    {
+           		        text: '连接目标',
+           		        dataIndex: 'target',           		        
+           		        width: 80
+           		    },
+           		    {
+           		        text: 'Web连接地址',
+           		        dataIndex: 'url',
+           		        //flex: 1
+           		      	width: 350
+           		    },
+           		    {
+           		        text: '叶节点',
+           		        dataIndex: 'leaf',
+           		        width: 50
+           		    },
+           		    {
+           		        text: '排序',
+           		        dataIndex: 'sortOrder',
+           		        width: 50
            		    }
                	],
            		listeners: {
  	           	    itemclick: function(view,record,item,index,e) {	           		   
  	           		    
  	           	    }
-           		}
+           		},
+           		tbar: [{
+           	    	xtype:'buttongroup',
+                    items: [{text: '刷新',
+        	        iconCls: 'addIcon'
+        	    }]},'-',{
+          	    	xtype:'buttongroup',
+                      items: [{text: '添加',
+          	        iconCls: 'addIcon'
+          	    }]},{
+          	    	xtype:'buttongroup',
+                    items: [{text: '修改',
+        	        iconCls: 'editIcon'
+        	    }]},{
+          	    	xtype:'buttongroup',
+                      items: [{text: '删除',
+          	        iconCls: 'deleteIcon'
+          	    }]},'-',{
+          	    	xtype:'buttongroup',
+                    items: [{text: '分配按钮',
+        	        iconCls: 'addIcon'
+        	    }]}]
     	    }
         ]
     });
