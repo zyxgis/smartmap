@@ -1,6 +1,7 @@
 package com.smartmap.systemManage.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -41,12 +42,17 @@ public class UserDao {
 	
 	@Transactional
 	public User save(User user) {
+		User userReturn = null;
+		Date date = new Date(java.lang.System.currentTimeMillis());
+		user.setLastUpdate(date);
 		if (user.getId() == null) {
+			user.setCreateTime(date);	
 			entityManager.persist(user);
-			return user;
+			userReturn = user;
 		} else {
-			return entityManager.merge(user);
-		}		
+			userReturn = entityManager.merge(user);
+		}
+		return userReturn;
 	}
 	
 	

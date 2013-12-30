@@ -19,12 +19,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.smartmap.gis.model.Person;
 import com.smartmap.systemManage.controller.util.OrganizationUtil;
 import com.smartmap.systemManage.dao.OrganizationDao;
 import com.smartmap.systemManage.dao.RoleDao;
@@ -75,7 +77,12 @@ public class UserController {
   	  		jsonObject.put("id", user.getId());
   	  		jsonObject.put("loginUsername", user.getLoginUsername());
   	  		jsonObject.put("loginPassword", user.getLoginPassword());
-  	  		
+  	  		jsonObject.put("name", user.getName());
+  	  		jsonObject.put("gender", user.getGender());
+  	  		jsonObject.put("email", user.getEmail());
+  	  		jsonObject.put("mobileNumber", user.getMobileNumber());
+  	  		jsonObject.put("organizationName", user.getOrganizationName());
+		
   	  		jsonArray.add(jsonObject);
   		}
   		jsonObjectResult.put("data", jsonArray);
@@ -116,9 +123,15 @@ public class UserController {
   		while (iteratorUser.hasNext()) {
   			User user = iteratorUser.next();
   			jsonObject = new JSONObject();
-  	  		jsonObject.put("id", user.getId());
+  			jsonObject.put("id", user.getId());
   	  		jsonObject.put("loginUsername", user.getLoginUsername());
-	  		jsonObject.put("loginPassword", user.getLoginPassword());
+  	  		jsonObject.put("loginPassword", user.getLoginPassword());
+  	  		jsonObject.put("name", user.getName());
+  	  		jsonObject.put("gender", user.getGender());
+  	  		jsonObject.put("email", user.getEmail());
+  	  		jsonObject.put("mobileNumber", user.getMobileNumber());
+  	  		jsonObject.put("organizationName", user.getOrganizationName());
+		
   	  		jsonArray.add(jsonObject);
   		}
   		jsonObjectResult.put("data", jsonArray);
@@ -159,9 +172,15 @@ public class UserController {
   		while (iteratorUser.hasNext()) {
   			User user = iteratorUser.next();
   			jsonObject = new JSONObject();
-  	  		jsonObject.put("id", user.getId());
-	  	  	jsonObject.put("loginUsername", user.getLoginUsername());
-	  		jsonObject.put("loginPassword", user.getLoginPassword());
+  			jsonObject.put("id", user.getId());
+  	  		jsonObject.put("loginUsername", user.getLoginUsername());
+  	  		jsonObject.put("loginPassword", user.getLoginPassword());
+  	  		jsonObject.put("name", user.getName());
+  	  		jsonObject.put("gender", user.getGender());
+  	  		jsonObject.put("email", user.getEmail());
+  	  		jsonObject.put("mobileNumber", user.getMobileNumber());
+  	  		jsonObject.put("organizationName", user.getOrganizationName());
+		
   	  		jsonArray.add(jsonObject);
   		}
   		jsonObjectResult.put("data", jsonArray);
@@ -235,5 +254,17 @@ public class UserController {
   		logger.info(resultJson);
   		return resultJson;
     }
+	
+	@RequestMapping(method=RequestMethod.POST,value="save") 
+	public String save(@ModelAttribute User user)
+	{
+		logger.debug("Received postback on person "+user);		
+		User userSaved = userDao.save(user);
+		if(userSaved != null)
+		{
+			return "successful";
+		}
+		return "error";
+	}
 	
 }

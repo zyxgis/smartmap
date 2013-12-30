@@ -47,16 +47,19 @@ var formPanel = new Ext.FormPanel({
     fieldDefaults: {
     	labelWidth : 65,
         labelAlign: 'right'
-    },    
-    items: [{
+    },
+    
+    items: [{ // 行1
     	xtype: 'fieldcontainer',
     	bodyBorder:false,
     	border: 0,
-        layout : "column",
+    	//frame:true,
+        layout : "column", // 从左往右的布局
         items : [{
            xtype: 'fieldcontainer',
-           columnWidth : .3,           
-           layout : "form",
+           columnWidth : .3, // 该列有整行中所占百分比           
+           layout : "form", // 从上往下的布局      
+           //frame:true,
            bodyBorder:false,
        	   border: 0,
            items : [{
@@ -93,7 +96,19 @@ var formPanel = new Ext.FormPanel({
                  emptyText: '请选择',
                  width : 120
                 }]
+             }/*, {
+           xtype: 'fieldcontainer',
+           columnWidth : .3,
+           layout : "form",
+           border:false,
+           bodyBorder:false,           
+           items : [{
+        	   xtype:'checkbox',
+               fieldLabel: '是否禁用',
+               name: 'forbidden',
+              width : 120
              }]
+          }*/]
        }],
          buttons: [{
             text: '查询',
@@ -104,6 +119,25 @@ var formPanel = new Ext.FormPanel({
                var proxy = gridPanel.store.getProxy();
                proxy.setExtraParam("username", username);
                gridPanel.store.loadPage(1);
+               /*
+               var conn = new Ext.data.Connection();  
+		       conn.request({  
+			       url: baseDataPath+'/user/queryUsersByRoleId?limit=10&page=1',   
+			       params: {roleId:2},
+			       method: 'get',
+			       scope: this,
+			       callback:function(options,success, response){   
+			       if(success){   
+				       //Ext.MessageBox.alert("提示","所选记录成功删除！");  
+				       store.reload();  
+				       gridPanel.store.reload();
+			       }   
+			       else   
+			       { 
+			       	   Ext.MessageBox.alert("提示","所选记录删除失败！");}   
+			       }
+		       }); 
+		       */
            }
         },{
             text: '清除',
@@ -123,7 +157,7 @@ var formPanel = new Ext.FormPanel({
 	var store = Ext.create('Ext.data.Store', {
 	    id:'store',
 	    autoLoad: false,
-	    fields:['id', 'loginUsername', 'loginPassword', 'name', 'organizationName'],
+	    fields:['id', 'account', 'password', 'userName', 'departmentName'],
 	    remoteSort: true,
 	    pageSize: itemsPerPage,
 	    proxy: {
@@ -148,24 +182,24 @@ var formPanel = new Ext.FormPanel({
 			    width: 100
 			},
 		    {
-		        text: '账号',
-		        dataIndex: 'loginUsername',
+		        text: '登录名',
+		        dataIndex: 'account',
 		        width: 150
 		    },
 		    {
 		        text: '密码',
-		        dataIndex: 'loginPassword',
+		        dataIndex: 'password',
 		        hidden: false,
 		        width: 150
 		    },
 		    {
-		        text: '姓名',
-		        dataIndex: 'name',
+		        text: '用户名',
+		        dataIndex: 'userName',
 		        width: 150
 		    },
 		    {
-		        text: '组织',
-		        dataIndex: 'organizationName',		        
+		        text: '部门',
+		        dataIndex: 'departmentName',		        
 		        renderer:showUrl,
 		        flex: 1
 		    }
@@ -235,20 +269,14 @@ var formPanel = new Ext.FormPanel({
     {
     	
     }
-    //
-    var addWindow = null;
     function add() {
-    	if(addWindow==null)
-    	{
-		addWindow = new Ext.Window({
+		var addWindow = new Ext.Window({
 			title: '添加用户',
 			id: 'addWindow',	       
 	        height:360,
 	        width: 350,
 	        layout: 'fit', 
-	        closeAction:'hide',
 	        items:[{
-	        		id:'addForm',
 				  xtype: 'form',
 				  url: baseDataPath+'/user/save',
 				  //frame:true,
@@ -356,198 +384,11 @@ var formPanel = new Ext.FormPanel({
 		        }]
 	        }]
 		});
-    	}
-    	else
-    	{
-    		var addFormA = Ext.getCmp('addForm');
-    		if(addFormA === undefined )
-    		{
-    			alert('addForm');
-    		}
-    		//alert(addFormA.getId());
-    		addFormA.getForm().reset();
-    	}
 		addWindow.show();
     }
-    //
-    var editWindow = null;
     function edit()
     {
     	var gridPanelUser = Ext.getCmp('gridPanelUser');
-    	var recordArray = gridPanelUser.getSelectionModel().getSelection();
-    	if(recordArray.length > 0)
-    	{
-    		if(editWindow==null)
-        	{
-    			editWindow = new Ext.Window({
-    			title: '修改用户',
-    			id: 'editWindow',
-    	        height:360,
-    	        width: 350,
-    	        layout: 'fit',
-    	        closeAction:'hide',
-    	        items:[{
-    	        		id:'editForm',
-    				  xtype: 'form',
-    				  url: baseDataPath+'/user/save',
-    				  //frame:true,
-    				  bodyBorder:false,
-    				  border: 0,
-    				  buttonAlign: 'center',
-    				  layout: 'anchor',
-    				  defaults: {
-    				    anchor: '100%'
-    				  },
-    				  fieldDefaults: {
-    				    msgTarget: 'side',
-    				    labelWidth: 75
-    				  },
-    				  defaultType: 'textfield',
-    				  items: [{
-    					    id:'editId',
-  	                        fieldLabel: 'id',
-	                        name: 'id'
-	                  	  },{
-	                	    id:'editLoginUsername',
-    	                    fieldLabel: '账号',
-    	                    name: 'loginUsername',
-    	                    allowBlank: false
-    	                  },
-    	                  {
-    	                	id:'editLoginPassword',
-    	                    fieldLabel: '密码',
-    	                    name: 'loginPassword',
-    	                    allowBlank: false
-    	                  },                  
-    	                  {
-    	                	id:'editName',
-    	                    fieldLabel: '姓名',
-    	                    name: 'name',
-    	                    allowBlank: false
-    	                  },
-    	                  {
-    	                	id:'editGender',
-    	                    fieldLabel: '性别',
-    	                    name: 'gender',
-    	                    xtype: 'combobox',
-    	                    queryMode: 'local',
-    	                    displayField: 'name',
-    	                    valueField: 'value',
-    	                    store: Ext.create('Ext.data.Store',
-    	                    {
-    	                      fields: [
-    	                        'value',
-    	                        'name'
-    	                      ],
-    	                      data: [
-    	                        {
-    	                          "value": "1",
-    	                          "name": "男"
-    	                        },
-    	                        {
-    	                          "value": "0",
-    	                          "name": "女"
-    	                        }
-    	                      ]
-    	                    })
-    	                  },
-    	                  {
-    	                	id:'editEmail',
-    	                    fieldLabel: '邮箱',
-    	                    name: 'email'
-    	                  },
-    	                  {
-    	                	id:'editMobileNumber',
-    	                    fieldLabel: '手机号码',
-    	                    name: 'mobileNumber'
-    	                  },
-    	                  {
-    	                	id:'editOrganizationId',
-    	                    fieldLabel: '组织',
-    	                    name: 'organizationId',
-                        	xtype: 'treecombox',
-    	                    align: 'center',
-    	                    displayField: 'text',
-    	                    valueField: 'id',
-    	                    store: Ext.create('Ext.data.TreeStore',{
-    	                      fields: [
-    	                        'id',
-    	                        'text'
-    	                      ],
-    	                      autoLoad: true,
-    	                      root: {
-    	                        text: '系统',
-    	                        id: '',
-    	                        expanded: true
-    	                      },
-    	                      proxy: {
-    	                        type: 'ajax',
-    	                        url: baseDataPath+'/organization/queryAllToTree'
-    	                      }
-    	                    })
-    	                  },
-    	                  {
-    	                	id:'editDescription',
-    	                    fieldLabel: '描述',
-    	                    name: 'description',
-    	                    xtype: 'textareafield',
-    	                    grow: true,
-    	                    anchor: '100%'
-    	                  }],
-    		        buttons: [{
-    		            text: 'Save',
-    		            handler: function() {
-    		            	this.up('form').getForm().submit();
-    		            }
-    		        },{
-    		            text: 'Cancel',
-    		            handler: function() {
-    		                this.up('form').getForm().reset();
-    		            }
-    		        }]
-    	        }]
-    		});
-    		}
-    		//
-    		var id = recordArray[0].get('id');
-    		var editId = Ext.getCmp('editId');
-    		editId.setValue(id);
-    		//
-    		var loginUsername = recordArray[0].get('loginUsername');
-    		var editLoginUsername = Ext.getCmp('editLoginUsername');
-    		editLoginUsername.setValue(loginUsername);
-    		//
-    		var loginPassword = recordArray[0].get('loginPassword');
-    		var editLoginPassword = Ext.getCmp('editLoginPassword');
-    		editLoginPassword.setValue(loginPassword);
-    		//
-    		var name = recordArray[0].get('name');
-    		var editName = Ext.getCmp('editName');
-    		editName.setValue(name);
-    		//
-    		var gender = recordArray[0].get('gender');
-    		var editGender = Ext.getCmp('editGender');
-    		editGender.setValue(gender);
-    		//
-    		var email = recordArray[0].get('email');
-    		var editEmail = Ext.getCmp('editEmail');
-    		editEmail.setValue(email);
-    		//
-    		var mobileNumber = recordArray[0].get('mobileNumber');
-    		var editMobileNumber = Ext.getCmp('editMobileNumber');
-    		editMobileNumber.setValue(mobileNumber);
-    		//
-    		var organizationId = recordArray[0].get('organizationId');
-    		var editOrganizationId = Ext.getCmp('editOrganizationId');
-    		editOrganizationId.setValue(organizationId);
-    		//
-    		var description = recordArray[0].get('description');
-    		var editDescription = Ext.getCmp('editDescription');
-    		editDescription.setValue(description);
-    		//
-    		//
-    		editWindow.show();
-    	}
     	
     }
     function remove()
